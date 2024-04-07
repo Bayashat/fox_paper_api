@@ -1,16 +1,14 @@
-from sqlalchemy import String, Integer
-from sqlalchemy.orm import relationship, mapped_column, Mapped
+from sqlalchemy.orm import relationship,Mapped
 
-from app.src.database import Base
-from sqlalchemy import Column
+from ..database import Base
+# from .user import User
+from .id_abc import intpk, Gender
 
-# class Role(Base):
-#     __tablename__ = "role"
 
-#     # id: Mapped[int] = mapped_column(primary_key=True)
-#     # name: Mapped[str] = mapped_column(String, unique=True, nullable=False)'
+class Role(Base):
+    __tablename__ = "roles"
     
-#     id = Column(Integer, primary_key=True)
-#     name = Column(String, unique=True, nullable=False)
+    id: Mapped[intpk]
+    name: Mapped[Gender]
     
-#     users = relationship("User", back_populates="role")
+    users: Mapped[list["User"]] = relationship(back_populates="role")

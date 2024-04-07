@@ -1,17 +1,16 @@
 from sqlalchemy import String, Text, Integer
-from sqlalchemy.orm import mapped_column, Mapped
+from sqlalchemy.orm import mapped_column, Mapped, relationship
 
-from app.src.database import Base
-from sqlalchemy import Column
-# from .id_abc import IdMixin
-
-# class Category(Base):
-#     __tablename__ = "category"
+from ..database import Base
+from .id_abc import intpk
+# from .research import Research
     
-#     # id: Mapped[int] = mapped_column(primary_key=True)
-#     # name = mapped_column(String, nullable=False)
-#     # description = mapped_column(Text)
+class Category(Base):
+    __tablename__ = "categories"
     
-#     id = Column(Integer, primary_key=True)
-#     name = Column(String, nullable=False)
-#     description = Column(Text)
+    id: Mapped[intpk]
+    name: Mapped[str] = mapped_column(nullable=False)
+    description: Mapped[str] = mapped_column(nullable=False)
+    
+    researches: Mapped[list["Research"]] = relationship(back_populates="categories", secondary="research_categories")
+    

@@ -1,11 +1,12 @@
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
-from config import settings
+from .config import Settings
 
 Base = declarative_base()
 
 # SQLALCHEMY_DATABASE_URL = "postgresql://admin:admin@localhost:5432/fox_paper"
+settings = Settings()
 
 engine = create_engine(
     url = settings.DATABASE_URL_psycopg2,

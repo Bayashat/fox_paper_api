@@ -1,38 +1,39 @@
-from sqlalchemy import Boolean, ForeignKey, Integer, String, Text, DateTime
+from sqlalchemy import ForeignKey
 from sqlalchemy.orm import relationship, mapped_column, Mapped
-from sqlalchemy.sql import func
+from datetime import datetime
 
-from app.src.database import Base
-from sqlalchemy import Column
-# from .id_abc import IdMixin
+from ..database import Base
+from .id_abc import intpk, Status, created_at, updated_at
+# from .user import User
+# from .file import File
 # from .category import Category
-# from .user import ResearchAuthors
 # from .comment import Comment
 
-# class Research(Base):
-#     __tablename__ = "research"
+
     
-#     # id: Mapped[int] = mapped_column(primary_key=True)
-#     # title: Mapped[str] = mapped_column(String, nullable=False)
-#     # description: Mapped[str] = mapped_column(Text)
-#     # file_id: Mapped[int] = mapped_column(Integer, ForeignKey("file.id"), nullable=False)
-#     # status: Mapped[int] = mapped_column(Integer, nullable=False)
-#     # created_at: Mapped[DateTime] = mapped_column(DateTime, server_default=func.now())
-#     # updated_at: Mapped[DateTime] = mapped_column(DateTime, server_default=func.now(), onupdate=func.now())
-#     # published_at: Mapped[DateTime] = mapped_column(DateTime)
-#     # is_published: Mapped[bool] = mapped_column(Boolean, default=False)
+class Research(Base):
+    __tablename__ = "researches"
     
-#     id = Column(Integer, primary_key=True)
-#     title = Column(String, nullable=False)
-#     description = Column(Text)
-#     status = Column(Integer, nullable=False)
-#     created_at = Column(DateTime, server_default=func.now())
-#     updated_at = Column(DateTime, server_default=func.now(), onupdate=func.now())
-#     published_at = Column(DateTime)
-#     is_published = Column(Boolean, default=False)
-#     file_id = Column(Integer, ForeignKey("file.id"), nullable=False)
+    id: Mapped[intpk]
+    title: Mapped[str] = mapped_column(nullable=False)
+    description: Mapped[str] = mapped_column(nullable=False)
+    status: Mapped[Status] = mapped_column(nullable=False)
+    is_published: Mapped[bool] = mapped_column(default=False, nullable=False)
+    created_at: Mapped[created_at]
+    updated_at: Mapped[updated_at] 
+    published_at: Mapped[datetime] = mapped_column(nullable=False)
+    file_id: Mapped[int] = mapped_column(ForeignKey("files.id"), nullable=False)
     
-#     categories = relationship("Category", back_populates="research")
-#     authors = relationship("ResearchAuthors", back_populates="research")
-#     comments = relationship("Comment", back_populates="research")
     
+    categories: Mapped[list["Category"]] = relationship(back_populates="researches", secondary="research_categories")
+    authors: Mapped[list["User"]] = relationship(back_populates="researches", secondary="research_authors")
+    comments: Mapped[list["Comment"]] = relationship(back_populates="research")
+    files: Mapped["File"] = relationship(back_populates="research")
+
+
+
+class ResearchCategories(Base):
+    __tablename__ = 'research_categories'
+    
+    research_id: Mapped[int] = mapped_column(ForeignKey("researches.id", ondelete="SET NULL"), primary_key=True)
+    category_id: Mapped[int] = mapped_column(ForeignKey("categories.id", ondelete="SET NULL"), primary_key=True)
