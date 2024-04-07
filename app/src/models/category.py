@@ -3,7 +3,6 @@ from sqlalchemy.orm import mapped_column, Mapped, relationship
 
 from ..database import Base
 from .id_abc import intpk
-# from .research import Research
     
 class Category(Base):
     __tablename__ = "categories"

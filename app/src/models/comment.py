@@ -3,9 +3,6 @@ from sqlalchemy.orm import relationship, mapped_column, Mapped
 
 from ..database import Base
 from .id_abc import intpk, created_at, updated_at
-# from .user import User
-# from .research import Research
-
            
 class Comment(Base):
     __tablename__ = "comments"

@@ -4,10 +4,6 @@ from datetime import datetime
 
 from ..database import Base
 from .id_abc import intpk, Status, created_at, updated_at
-# from .user import User
-# from .file import File
-# from .category import Category
-# from .comment import Comment
 
 
     

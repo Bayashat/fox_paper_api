@@ -3,7 +3,6 @@ from datetime import datetime
 
 from ..database import Base
 from .id_abc import intpk
-# from .research import Research
 
 class File(Base):
     __tablename__ = "files"

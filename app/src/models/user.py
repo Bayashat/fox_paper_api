@@ -1,14 +1,9 @@
 from sqlalchemy import ForeignKey, Text
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from datetime import datetime
-from typing import Optional
 
 from ..database import Base
 from .id_abc import intpk, Gender, created_at, updated_at
-# from .role import Role
-# from .research import Research
-# from .comment import Comment
-
 
 
 class User(Base):
@@ -22,7 +17,6 @@ class User(Base):
     gender: Mapped[Gender] = mapped_column(nullable=False)
     phone_number: Mapped[str] = mapped_column(unique=True, nullable=False)
     date_of_birth: Mapped[datetime]
-    role_id: Mapped[Optional[int]] = mapped_column(ForeignKey("roles.id", ondelete="Set Null"), nullable=False)
     biography: Mapped[str] = mapped_column(Text)
     created_at: Mapped[created_at]
     updated_at: Mapped[updated_at]
