@@ -2,13 +2,13 @@ from sqlalchemy.orm import relationship,Mapped
 
 from ..database import Base
 # from .user import User
-from .id_abc import intpk, Gender
+from .id_abc import intpk, UserRole
 
 
 class Role(Base):
     __tablename__ = "roles"
     
     id: Mapped[intpk]
-    name: Mapped[Gender]
+    name: Mapped[UserRole]
     
     users: Mapped[list["User"]] = relationship(back_populates="role")
