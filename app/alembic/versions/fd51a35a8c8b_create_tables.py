@@ -1,8 +1,8 @@
-"""created tables
+"""create tables
 
-Revision ID: 3c7ce0cdf16e
+Revision ID: fd51a35a8c8b
 Revises: 
-Create Date: 2024-04-08 11:41:40.403554
+Create Date: 2024-04-10 21:08:57.865107
 
 """
 from typing import Sequence, Union
@@ -12,7 +12,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision: str = '3c7ce0cdf16e'
+revision: str = 'fd51a35a8c8b'
 down_revision: Union[str, None] = None
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
@@ -36,7 +36,7 @@ def upgrade() -> None:
     )
     op.create_table('roles',
     sa.Column('id', sa.Integer(), nullable=False),
-    sa.Column('name', sa.Enum('MALE', 'FEMALE', 'OTHER', 'PREFER_NOT_TO_SAY', name='gender'), nullable=False),
+    sa.Column('name', sa.String(), nullable=False),
     sa.PrimaryKeyConstraint('id')
     )
     op.create_table('researches',
@@ -60,7 +60,7 @@ def upgrade() -> None:
     sa.Column('password', sa.String(), nullable=False),
     sa.Column('gender', sa.Enum('MALE', 'FEMALE', 'OTHER', 'PREFER_NOT_TO_SAY', name='gender'), nullable=False),
     sa.Column('phone_number', sa.String(), nullable=False),
-    sa.Column('date_of_birth', sa.DateTime(), nullable=False),
+    sa.Column('date_of_birth', sa.Date(), nullable=False),
     sa.Column('biography', sa.Text(), nullable=False),
     sa.Column('created_at', sa.DateTime(), server_default=sa.text("TIMEZONE('utc', now())"), nullable=False),
     sa.Column('updated_at', sa.DateTime(), server_default=sa.text("TIMEZONE('utc', now())"), nullable=False),
