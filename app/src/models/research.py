@@ -5,20 +5,22 @@ from datetime import datetime
 from ..database import Base
 from .id_abc import intpk, Status, created_at, updated_at
 
-
+from .category import Category
+from .comment import Comment
+from .file import File
     
 class Research(Base):
     __tablename__ = "researches"
     
     id: Mapped[intpk]
-    title: Mapped[str] = mapped_column(nullable=False)
-    description: Mapped[str] = mapped_column(nullable=False)
-    status: Mapped[Status] = mapped_column(nullable=False)
-    is_published: Mapped[bool] = mapped_column(default=False, nullable=False)
+    title: Mapped[str]
+    description: Mapped[str]
+    status: Mapped[Status]
+    is_published: Mapped[bool]
     created_at: Mapped[created_at]
     updated_at: Mapped[updated_at] 
-    published_at: Mapped[datetime] = mapped_column(nullable=False)
-    file_id: Mapped[int] = mapped_column(ForeignKey("files.id"), nullable=False)
+    published_at: Mapped[datetime]
+    file_id: Mapped[int] = mapped_column(ForeignKey("files.id"))
     
     
     categories: Mapped[list["Category"]] = relationship(back_populates="researches", secondary="research_categories")

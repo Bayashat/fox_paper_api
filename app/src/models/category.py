@@ -8,8 +8,8 @@ class Category(Base):
     __tablename__ = "categories"
     
     id: Mapped[intpk]
-    name: Mapped[str] = mapped_column(nullable=False)
-    description: Mapped[str] = mapped_column(nullable=False)
+    name: Mapped[str]
+    description: Mapped[str]
     
     researches: Mapped[list["Research"]] = relationship(back_populates="categories", secondary="research_categories")
     

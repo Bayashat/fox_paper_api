@@ -12,9 +12,6 @@ created_at = Annotated[datetime, mapped_column(server_default=text("TIMEZONE('ut
 updated_at = Annotated[datetime, mapped_column(server_default=text("TIMEZONE('utc', now())"), onupdate=text("TIMEZONE('utc', now())"))]
 
 
-
-    
-
 class Gender(Enum):
     MALE = "Male"
     FEMALE = "Female"
@@ -24,7 +21,7 @@ class Gender(Enum):
 class UserRole(Enum):
     ADMIN = "Admin"
     USER = "User"
-    RESEARCHER = "Researcher"
+    RESEARCHER = "Researcher"   
 
 class Status(Enum):
     DRAFT = "Draft"

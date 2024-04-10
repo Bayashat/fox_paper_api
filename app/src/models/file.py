@@ -8,8 +8,8 @@ class File(Base):
     __tablename__ = "files"
 
     id: Mapped[intpk]
-    name: Mapped[str] = mapped_column(nullable=False)
-    file_path: Mapped[str] = mapped_column(nullable=False)
+    name: Mapped[str]
+    file_path: Mapped[str]
     created_at: Mapped[datetime]
     updated_at: Mapped[datetime] 
     
