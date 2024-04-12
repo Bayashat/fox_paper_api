@@ -1,18 +1,30 @@
 from pydantic import BaseModel
-from typing import Optional
 from datetime import datetime
+from fastapi import File, UploadFile
+from typing import Annotated
+
+from ...models.id_abc import Status
 
 
-
-# for get_researches as response
-
-class ResearchesRequest(BaseModel):
+class ResearchResponse(BaseModel):
     id: int
     title: str
     description: str
-    status: int
+    status: Status
     is_published: bool
     file_id: int
     created_at: datetime
     updated_at: datetime
-    published_at: datetime
+    published_at: datetime | None
+    
+
+class ResearchCreateRequest(BaseModel):
+    title: str
+    description: str
+    file_id: int = 1
+    
+
+class ResearchUpdateRequest(BaseModel):
+    title: str = None
+    description: str = None
+    file_id: int = None

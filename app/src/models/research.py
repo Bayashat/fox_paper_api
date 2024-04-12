@@ -19,7 +19,7 @@ class Research(Base):
     is_published: Mapped[bool]
     created_at: Mapped[created_at]
     updated_at: Mapped[updated_at] 
-    published_at: Mapped[datetime]
+    published_at: Mapped[datetime] = mapped_column(nullable=True)
     file_id: Mapped[int] = mapped_column(ForeignKey("files.id"))
     
     
