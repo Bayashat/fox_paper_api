@@ -19,7 +19,6 @@ class UsersRepository:
             password = hashed_password,
             gender = user.gender,
             date_of_birth = user.date_of_birth,
-            biography = user.biography,
             role_id = 1
         )
         db.add(new_user)

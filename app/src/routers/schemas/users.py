@@ -13,7 +13,7 @@ class UserModel(BaseModel):
     gender: str 
     phone_number: PhoneNumber
     date_of_birth: date
-    biography: str
+    biography: str | None
     created_at: datetime
     updated_at: datetime
     role_id: int
@@ -26,8 +26,7 @@ class SignupSchema(BaseModel):
     password: str = "admin"
     gender: Gender | None
     phone_number: PhoneNumber | None = "+77078788885"
-    date_of_birth: Optional[date] 
-    biography: Optional[str]
+    date_of_birth: Optional[date]
     
     
 class LoginSchema(BaseModel):
@@ -39,10 +38,10 @@ class ProfileSchema(BaseModel):
     last_name: str
     email: EmailStr
     password: str
-    gender: Optional[str]
-    phone_number: Optional[PhoneNumber]
-    date_of_birth: Optional[date] 
-    biography: Optional[str]
+    gender: Gender | None = None
+    phone_number: PhoneNumber
+    date_of_birth: date | None = None
+    biography: str | None = None
     created_at: datetime
     updated_at: datetime
     role_id: int

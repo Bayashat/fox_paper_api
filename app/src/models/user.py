@@ -1,4 +1,4 @@
-from sqlalchemy import ForeignKey, Text
+from sqlalchemy import ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from datetime import date
 
@@ -18,7 +18,7 @@ class User(Base):
     gender: Mapped[Gender]
     phone_number: Mapped[str] = mapped_column(unique=True)
     date_of_birth: Mapped[date]
-    biography: Mapped[str] = mapped_column(Text)
+    biography: Mapped[str] = mapped_column(nullable=True)
     created_at: Mapped[created_at]
     updated_at: Mapped[updated_at]
     role_id: Mapped[int] = mapped_column(ForeignKey("roles.id", ondelete="SET NULL"))
