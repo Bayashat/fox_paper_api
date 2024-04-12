@@ -4,7 +4,6 @@ from typing import Annotated
 from sqlalchemy import text
 from sqlalchemy.orm import mapped_column
 
-
 intpk = Annotated[int, mapped_column(primary_key=True)]
 
 # created_at: Mapped[datetime] = mapped_column(server_default=func.now())
@@ -17,6 +16,8 @@ class Gender(Enum):
     FEMALE = "Female"
     OTHER = "Other"
     PREFER_NOT_TO_SAY = "Prefer not to say"  
+
+# create type user_role as ENUM('ADMIN', 'USER', 'RESEARCHER');
 
 class UserRole(Enum):
     ADMIN = "Admin"
