@@ -1,7 +1,7 @@
 from sqlalchemy.orm import Session
 from fastapi import HTTPException, status
 from passlib.context import CryptContext
-from ..schemas.users import SignupSchema, UserUpdate
+from ..schemas.users import SignupSchema, UserUpdate, UserModel
 from app.src.models.user import User
 
 
@@ -27,6 +27,15 @@ class UsersRepository:
 
         return new_user
     
+    @staticmethod
+    def get_users(db: Session, skip: int = 0, limit: int = 20):
+        users = db.query(User).offset(skip).limit(limit).all()
+        return users
+    
+    @staticmethod
+    def get_user_by_email(db: Session, email: str):
+        user_data = db.query(User).filter(User.email == email).first()
+        return UserModel.model_validate(user_data.__dict__)
     
     @staticmethod
     def get_by_email(db:Session, email: str):
@@ -42,6 +51,9 @@ class UsersRepository:
     
     @staticmethod
     def update(db: Session, db_user: User, user: UserUpdate):
+        if user.password:
+            db_user.password = pwd_context.hash(user.password)
+        
         for key,value in user.model_dump(exclude_unset=True).items():
             setattr(db_user, key, value)
         
