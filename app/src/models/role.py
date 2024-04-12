@@ -9,7 +9,7 @@ class Role(Base):
     __tablename__ = "roles"
     
     id: Mapped[intpk]
-    name: Mapped[str]
+    name: Mapped[UserRole]
     
     users: Mapped[list["User"]] = relationship(back_populates="role")
 
