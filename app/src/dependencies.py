@@ -1,28 +1,28 @@
 from jose import jwt
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from app.src.database import SessionLocal
-from fastapi import  Depends, Request, HTTPException, status
+from fastapi import Depends, Request, HTTPException, status
 
 from app.src.models.user import User
 from .routers.repositories.users import UsersRepository
-from .routers.services.users import get_user_by_email
 
 from .config import ALGORITHM, SECRET_KEY
+
 
 # Database part
 def get_db():
     db = SessionLocal()
     try:
         yield db
-    finally: 
+    finally:
         db.close()
-        
+
 
 class JWTRepo:
     @staticmethod
     def generate_token(data: dict):
         return jwt.encode(data, SECRET_KEY, algorithm=ALGORITHM)
-    
+
     @staticmethod
     def decode_token(token: str):
         try:
@@ -44,11 +44,12 @@ class JWTBearer(HTTPBearer):
                     status_code=403, detail="Invalid authendication scheme"
                 )
             if not self.verify_jwt(credentials.credentials):
-                raise HTTPException(status_code=403, detail="Invalid token or expired token")
+                raise HTTPException(
+                    status_code=403, detail="Invalid token or expired token"
+                )
             return credentials.credentials
         else:
             raise HTTPException(status_code=403, detail="Invalid authorization code")
-
 
     def verify_jwt(self, jwt_token: str) -> bool:
         is_token_valid: bool = False
@@ -74,10 +75,8 @@ def get_token_data(token: str = Depends(JWTBearer())):
         raise credentials_exception
     return token_data
 
-     
-def access_only_admin(
-    token_data: dict = Depends(get_token_data), db=Depends(get_db)
-):
+
+def access_only_admin(token_data: dict = Depends(get_token_data), db=Depends(get_db)):
     user_email = token_data["sub"]
     existing_user = UsersRepository.get_by_email(db=db, email=user_email)
 
@@ -142,7 +141,7 @@ def only_authorized_user(
     token_data: dict = Depends(get_token_data), db=Depends(get_db)
 ):
     user_email = token_data["sub"]
-    existing_user = get_user_by_email(db=db, email=user_email)
+    existing_user = UsersRepository.get_user_by_email(db=db, email=user_email)
     if not existing_user:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,

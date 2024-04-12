@@ -18,8 +18,8 @@ router = APIRouter()
 @router.post("/signup", status_code=status.HTTP_201_CREATED)
 def signup(user: SignupSchema, db: Session = Depends(get_db)):
     if user_signup_validate(db=db, user=user):
-        UsersRepository.create_user(db, user)
-        return Response(content="User created", status_code=status.HTTP_201_CREATED)
+        new_user = UsersRepository.create_user(db, user)
+        return Response(content=f"User with id {new_user.id}", status_code=status.HTTP_201_CREATED)
 
 
 @router.post("/login", status_code=status.HTTP_200_OK)

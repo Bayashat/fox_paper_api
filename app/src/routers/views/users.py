@@ -57,4 +57,5 @@ def delete_user(
     if not db_user:
         raise HTTPException(status_code=404, detail="User not found")
 
-    return UsersRepository.delete(db, db_user)
+    UsersRepository.delete(db, db_user)
+    return {"message": "User deleted"}
