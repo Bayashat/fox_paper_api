@@ -14,7 +14,7 @@ router = APIRouter()
 @router.get("/", response_model=List[UserResponse])
 def get_users(skip: int = 0, limit: int = 20, db: Session = Depends(get_db)):
     users = UsersRepository.get_users(db, skip=skip, limit=limit)
-    return users
+    return [UserResponse.model_validate(user.__dict__) for user in users]
 
 @router.get("/{user_id}", response_model=UserResponse)
 def get_user(
@@ -27,7 +27,7 @@ def get_user(
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
 
-    return user
+    return UserResponse.model_validate(user.__dict__)
 
 
 @router.put("/{user_id}", response_model=UserResponse)
@@ -42,7 +42,8 @@ def update_user(
     if not db_user:
         raise HTTPException(status_code=404, detail="User not found")
 
-    return UsersRepository.update(db, db_user, user)
+    new_user = UsersRepository.update(db, db_user, user)
+    return UserResponse.model_validate(new_user.__dict__)
 
 
 @router.delete("/{user_id}", response_model=UserResponse)

@@ -26,7 +26,7 @@ class SignupSchema(BaseModel):
     password: str = "admin"
     gender: Gender | None
     phone_number: PhoneNumber | None = "+77078788885"
-    date_of_birth: Optional[date]
+    date_of_birth: date | None = None
     
     
 class LoginSchema(BaseModel):
