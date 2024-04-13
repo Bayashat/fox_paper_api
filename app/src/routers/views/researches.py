@@ -5,8 +5,10 @@ from typing import List
 from ..repositories.researches import ResearchRepository
 from ..schemas.users import UserModel
 from ..schemas.researches import ResearchResponse, ResearchCreateRequest, ResearchUpdateRequest
-from ...dependencies import get_db, access_only_researcher
+from ..repositories.categories import CategoryRepository
+from ...dependencies import get_db, access_only_researcher, only_authorized_user
 from fastapi import HTTPException
+from ..services.researches import research_create_validate, research_update_validate
 
 router = APIRouter()
 
@@ -15,8 +17,12 @@ def research_list(
     db: Session = Depends(get_db),
     offset: int = 0,
     limit: int = 10,
+    user: UserModel = Depends(only_authorized_user)
 ):
     researches = ResearchRepository.get_researches(db, limit, offset)
+    for research in researches:
+        research.category_ids = CategoryRepository.get_by_research_id(db, research.id)
+        
     return [ResearchResponse.model_validate(research.__dict__) for research in researches]
 
 
@@ -26,24 +32,29 @@ def research_list(
 #     db: Session = Depends(get_db)
 # ):
 
-@router.post("/")
+@router.post("/", response_model=ResearchResponse, status_code=status.HTTP_201_CREATED)
 def create_research(
     research: ResearchCreateRequest,
     db: Session = Depends(get_db),
-    # user: UserModel = Depends(access_only_researcher)
+    user: UserModel = Depends(access_only_researcher)
 ):
-    db_research = ResearchRepository.create_research(db, research)
-    return ResearchResponse.model_validate(db_research.__dict__)
+    if research_create_validate(db, research):
+        db_research = ResearchRepository.create_research(db, research, user.id)
+
+        return ResearchResponse.model_validate(db_research.__dict__)
     
 
 @router.get("/{research_id}", response_model=ResearchResponse)
 def get_research(
     research_id: int,
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
+    user: UserModel = Depends(only_authorized_user)
 ):
     db_research = ResearchRepository.get_by_id(db, research_id)
+    db_categories = CategoryRepository.get_by_research_id(db, research_id)
     if not db_research:
         raise HTTPException(status_code=404, detail="Research not found")
+    db_research.category_ids = db_categories
     return ResearchResponse.model_validate(db_research.__dict__)
 
 
@@ -52,13 +63,12 @@ def update_research(
     research_id: int,
     research: ResearchUpdateRequest,
     db: Session = Depends(get_db),
-    # user: UserModel = Depends(access_only_researcher)
+    user: UserModel = Depends(access_only_researcher)
 ):
-    db_research = ResearchRepository.get_by_id(db, research_id)
-    if not db_research:
-        raise HTTPException(status_code=404, detail="Research not found")
+    db_research = research_update_validate(db, research)
     new_research = ResearchRepository.update(db, db_research, research)
     return ResearchUpdateRequest.model_validate(new_research.__dict__)
+
 
 @router.delete("/{research_id}")
 def delete_research(
