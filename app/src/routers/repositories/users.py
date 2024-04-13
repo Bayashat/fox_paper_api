@@ -11,16 +11,8 @@ class UsersRepository:
     @staticmethod
     def create_user(db: Session, user: SignupSchema):
         hashed_password = pwd_context.hash(user.password)
-        new_user = User(
-            first_name = user.first_name,
-            last_name = user.last_name,
-            email = user.email,
-            phone_number = user.phone_number,
-            password = hashed_password,
-            gender = user.gender,
-            date_of_birth = user.date_of_birth,
-            role_id = 1
-        )
+        new_user = User(**user.model_dump())
+        new_user.password = hashed_password
         db.add(new_user)
         db.commit()
         db.refresh(new_user)
@@ -31,15 +23,12 @@ class UsersRepository:
     def get_users(db: Session, skip: int = 0, limit: int = 20):
         users = db.query(User).offset(skip).limit(limit).all()
         return users
-    
-    @staticmethod
-    def get_user_by_email(db: Session, email: str):
-        user_data = db.query(User).filter(User.email == email).first()
-        return UserModel.model_validate(user_data.__dict__)
-    
+
+
     @staticmethod
     def get_by_email(db:Session, email: str):
         return db.query(User).filter(User.email == email).first()
+
     
     @staticmethod
     def get_by_id(db:Session, user_id: int):

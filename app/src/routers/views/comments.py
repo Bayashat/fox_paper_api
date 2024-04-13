@@ -6,6 +6,7 @@ from ...dependencies import get_db, only_authorized_user
 from ..schemas.comments import CommentResponse, CommentCreateRequest
 from ..schemas.users import UserModel
 from ..repositories.comments import CommentsRepository
+from ..repositories.researches import ResearchRepository
 
 router = APIRouter()
 
@@ -17,6 +18,8 @@ def get_comments(
     db: Session = Depends(get_db),
     user: UserModel = Depends(only_authorized_user)
 ):
+    if not ResearchRepository.get_by_id(db, research_id):
+        raise HTTPException(status_code=404, detail="Research not found")
     comments = CommentsRepository.get_comments(db, research_id, limit, offset)
     return [CommentResponse.model_validate(comment.__dict__) for comment in comments]
 
@@ -28,6 +31,8 @@ def create_comment(
     db: Session = Depends(get_db),
     user: UserModel = Depends(only_authorized_user)
 ):
+    if not ResearchRepository.get_by_id(db, research_id):
+        raise HTTPException(status_code=404, detail="Research not found")
     comment = CommentsRepository.create_comment(db, research_id, comment, user.id)
     return CommentResponse.model_validate(comment.__dict__)
 
@@ -39,7 +44,13 @@ def get_comment(
     db: Session = Depends(get_db),
     user: UserModel = Depends(only_authorized_user)
 ):
+    if not ResearchRepository.get_by_id(db, research_id):
+        raise HTTPException(status_code=404, detail="Research not found")
+    
     comment = CommentsRepository.get_comment(db, research_id, comment_id)
+    if not comment:
+        raise HTTPException(status_code=404, detail="Comment not found")
+    
     return CommentResponse.model_validate(comment.__dict__)
 
 @router.delete("/{research_id}/comments/{comment_id}")
@@ -49,6 +60,9 @@ def delete_comment(
     db: Session = Depends(get_db),
     user: UserModel = Depends(only_authorized_user)
 ):
+    if not ResearchRepository.get_by_id(db, research_id):
+        raise HTTPException(status_code=404, detail="Research not found")
+    
     db_comment = CommentsRepository.get_comment(db, research_id, comment_id)
     if not db_comment:
         raise HTTPException(status_code=404, detail="Comment not found")

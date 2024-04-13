@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session
 from app.src.dependencies import (
     get_db,
     only_authorized_user,
-    access_only_admin,
+    access_only_moderator,
     access_only_researcher,
     access_only_standard_user,
 )
@@ -19,17 +19,25 @@ router = APIRouter()
 def signup(user: SignupSchema, db: Session = Depends(get_db)):
     if user_signup_validate(db=db, user=user):
         new_user = UsersRepository.create_user(db, user)
-        return Response(content=f"User with id {new_user.id}", status_code=status.HTTP_201_CREATED)
+        token = JWTRepo.generate_token({"sub": new_user.email})
+        return {
+            "access_token": token,
+            "user": UserModel.model_validate(new_user.__dict__),
+        }
 
 
 @router.post("/login", status_code=status.HTTP_200_OK)
 def user_login(request: LoginSchema, db: Session = Depends(get_db)):
     if user_login_validate(db=db, user=request):
         token = JWTRepo.generate_token({"sub": request.email})
-        return {"access_token": token, "token_type": "Bearer"}
-    
+        return {
+            "access_token": token,
+            "user": UserModel.model_validate(
+                UsersRepository.get_by_email(db, request.email).__dict__
+            ),
+        }
 
 
-@router.get("/profile", response_model=ProfileSchema, status_code=status.HTTP_200_OK)
-def user_profile(user: UserModel = Depends(only_authorized_user)):
-    return ProfileSchema(**dict(user))
+# @router.get("/profile", response_model=ProfileSchema, status_code=status.HTTP_200_OK)
+# def user_profile(user: UserModel = Depends(only_authorized_user)):
+#     return ProfileSchema(**dict(user))
