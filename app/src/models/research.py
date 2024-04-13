@@ -20,15 +20,13 @@ class Research(Base):
     created_at: Mapped[created_at]
     updated_at: Mapped[updated_at] 
     published_at: Mapped[datetime] = mapped_column(nullable=True)
-    file_id: Mapped[int] = mapped_column(ForeignKey("files.id"))
+    file_id: Mapped[int] = mapped_column(ForeignKey("files.id", ondelete="CASCADE"), unique=True)
+    author_id: Mapped[str]
     
     
     categories: Mapped[list["Category"]] = relationship(back_populates="researches", secondary="research_categories")
-    authors: Mapped[list["User"]] = relationship(back_populates="researches", secondary="research_authors")
     comments: Mapped[list["Comment"]] = relationship(back_populates="research")
     files: Mapped["File"] = relationship(back_populates="research")
-
-
 
 class ResearchCategories(Base):
     __tablename__ = 'research_categories'

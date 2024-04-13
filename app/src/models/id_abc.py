@@ -20,7 +20,7 @@ class Gender(Enum):
 # create type user_role as ENUM('ADMIN', 'USER', 'RESEARCHER');
 
 class UserRole(Enum):
-    ADMIN = "Admin"
+    MODERATOR = "Moderator"
     USER = "User"
     RESEARCHER = "Researcher"   
 

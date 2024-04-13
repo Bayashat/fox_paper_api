@@ -12,4 +12,3 @@ class Category(Base):
     description: Mapped[str]
     
     researches: Mapped[list["Research"]] = relationship(back_populates="categories", secondary="research_categories")
-    

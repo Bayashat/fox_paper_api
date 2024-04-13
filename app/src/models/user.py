@@ -24,13 +24,5 @@ class User(Base):
     role_id: Mapped[int] = mapped_column(ForeignKey("roles.id", ondelete="SET NULL"))
     
     role: Mapped["Role"] = relationship(back_populates="users")
-    researches: Mapped[list["Research"]] = relationship(back_populates="authors", secondary="research_authors")
     comments: Mapped[list["Comment"]] = relationship(back_populates="author")
     
-
-class ResearchAuthors(Base):
-    __tablename__ = "research_authors"
-
-    id: Mapped[intpk]
-    research_id: Mapped[int] = mapped_column(ForeignKey("researches.id"), nullable=False)
-    user_id: Mapped[int] = mapped_column(ForeignKey("users.id"), nullable=False)
