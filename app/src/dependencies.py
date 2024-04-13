@@ -5,7 +5,7 @@ from fastapi import Depends, Request, HTTPException, status
 
 from app.src.models.user import User
 from .routers.repositories.users import UsersRepository
-
+from .routers.schemas.users import UserModel
 from .config import ALGORITHM, SECRET_KEY
 
 
@@ -76,7 +76,7 @@ def get_token_data(token: str = Depends(JWTBearer())):
     return token_data
 
 
-def access_only_admin(token_data: dict = Depends(get_token_data), db=Depends(get_db)):
+def access_only_moderator(token_data: dict = Depends(get_token_data), db=Depends(get_db)):
     user_email = token_data["sub"]
     existing_user = UsersRepository.get_by_email(db=db, email=user_email)
 
@@ -89,7 +89,7 @@ def access_only_admin(token_data: dict = Depends(get_token_data), db=Depends(get
     if existing_user.role_id != 2:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
-            detail="You are not a admin",
+            detail="You are not a Moderator",
         )
 
     return existing_user
@@ -141,10 +141,10 @@ def only_authorized_user(
     token_data: dict = Depends(get_token_data), db=Depends(get_db)
 ):
     user_email = token_data["sub"]
-    existing_user = UsersRepository.get_user_by_email(db=db, email=user_email)
+    existing_user = UsersRepository.get_by_email(db=db, email=user_email)
     if not existing_user:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="User not found",
         )
-    return existing_user
+    return UserModel.model_validate(existing_user.__dict__)
