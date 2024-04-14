@@ -1,8 +1,8 @@
 """created tables
 
-Revision ID: 40f5e5a1c025
+Revision ID: fe6f06778726
 Revises: 
-Create Date: 2024-04-14 14:57:35.368223
+Create Date: 2024-04-14 16:17:19.821900
 
 """
 from typing import Sequence, Union
@@ -12,7 +12,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision: str = '40f5e5a1c025'
+revision: str = 'fe6f06778726'
 down_revision: Union[str, None] = None
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
@@ -42,7 +42,7 @@ def upgrade() -> None:
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('title', sa.String(), nullable=False),
     sa.Column('description', sa.String(), nullable=False),
-    sa.Column('status', sa.Enum('SUBMITTED', 'UNDER_REVIEW', 'ACCEPTED', 'REJECTED', 'PUBLISHED', name='status'), nullable=False),
+    sa.Column('status', sa.Enum('SUBMITTED', 'UNDER_REVIEW', 'REJECTED', 'PUBLISHED', name='status'), nullable=False),
     sa.Column('is_published', sa.Boolean(), nullable=False),
     sa.Column('created_at', sa.DateTime(), server_default=sa.text("TIMEZONE('utc', now())"), nullable=False),
     sa.Column('updated_at', sa.DateTime(), server_default=sa.text("TIMEZONE('utc', now())"), nullable=False),
