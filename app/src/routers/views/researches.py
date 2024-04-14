@@ -6,7 +6,7 @@ from ..repositories.researches import ResearchRepository
 from ..schemas.users import UserModel
 from ..schemas.researches import ResearchResponse, ResearchCreateRequest, ResearchUpdateRequest
 from ..repositories.categories import CategoryRepository
-from ...dependencies import get_db, access_only_researcher, only_authorized_user
+from ...dependencies import get_db, access_only_user, only_authorized_user
 from fastapi import HTTPException
 from ..services.researches import research_create_validate, research_update_validate
 
@@ -36,7 +36,7 @@ def research_list(
 def create_research(
     research: ResearchCreateRequest,
     db: Session = Depends(get_db),
-    user: UserModel = Depends(access_only_researcher)
+    user: UserModel = Depends(access_only_user)
 ):
     if research_create_validate(db, research):
         db_research = ResearchRepository.create_research(db, research, user.id)
@@ -63,7 +63,7 @@ def update_research(
     research_id: int,
     research: ResearchUpdateRequest,
     db: Session = Depends(get_db),
-    user: UserModel = Depends(access_only_researcher)
+    user: UserModel = Depends(access_only_user)
 ):
     db_research = research_update_validate(db, research)
     new_research = ResearchRepository.update(db, db_research, research)
@@ -74,7 +74,7 @@ def update_research(
 def delete_research(
     research_id: int,
     db: Session = Depends(get_db),
-    user: UserModel = Depends(access_only_researcher)
+    user: UserModel = Depends(access_only_user)
 ):
     db_research = ResearchRepository.get_by_id(db, research_id)
     if not db_research:

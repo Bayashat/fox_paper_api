@@ -1,14 +1,8 @@
-from fastapi import APIRouter, Depends, HTTPException, status, Response
+from fastapi import APIRouter, Depends, status
 from sqlalchemy.orm import Session
-from app.src.dependencies import (
-    get_db,
-    only_authorized_user,
-    access_only_moderator,
-    access_only_researcher,
-    access_only_standard_user,
-)
+from app.src.dependencies import get_db
 from app.src.routers.repositories.users import UsersRepository
-from ..schemas.users import SignupSchema, LoginSchema, ProfileSchema, UserModel
+from ..schemas.users import SignupSchema, LoginSchema, UserModel
 from app.src.dependencies import JWTRepo
 from ..services.users import user_signup_validate, user_login_validate
 
@@ -36,8 +30,3 @@ def user_login(request: LoginSchema, db: Session = Depends(get_db)):
                 UsersRepository.get_by_email(db, request.email).__dict__
             ),
         }
-
-
-# @router.get("/profile", response_model=ProfileSchema, status_code=status.HTTP_200_OK)
-# def user_profile(user: UserModel = Depends(only_authorized_user)):
-#     return ProfileSchema(**dict(user))

@@ -94,8 +94,7 @@ def access_only_moderator(token_data: dict = Depends(get_token_data), db=Depends
 
     return existing_user
 
-
-def access_only_standard_user(
+def access_only_user(
     token_data: dict = Depends(get_token_data), db=Depends(get_db)
 ):
     user_email = token_data["sub"]
@@ -108,27 +107,6 @@ def access_only_standard_user(
         )
 
     if existing_user.role_id != 1:
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="You are not a standard user",
-        )
-
-    return existing_user
-
-
-def access_only_researcher(
-    token_data: dict = Depends(get_token_data), db=Depends(get_db)
-):
-    user_email = token_data["sub"]
-    existing_user = UsersRepository.get_by_email(db=db, email=user_email)
-
-    if not existing_user:
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="User not found",
-        )
-
-    if existing_user.role_id != 3:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="You are not a researcher",

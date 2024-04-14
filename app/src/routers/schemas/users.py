@@ -11,8 +11,8 @@ class UserModel(BaseModel):
     email: EmailStr
     password: str 
     gender: str 
-    phone_number: PhoneNumber
-    date_of_birth: date
+    phone_number: PhoneNumber | None
+    date_of_birth: date | None
     biography: str | None
     created_at: datetime
     updated_at: datetime
@@ -34,17 +34,6 @@ class LoginSchema(BaseModel):
     email: EmailStr = "admin@gmail.com"
     password: str = "admin"
     
-class ProfileSchema(BaseModel):
-    first_name: str
-    last_name: str
-    email: EmailStr
-    gender: Gender | None = None
-    phone_number: PhoneNumber
-    date_of_birth: date | None = None
-    biography: str | None = None
-    created_at: datetime
-    updated_at: datetime
-    role_id: int
     
 class UserResponse(BaseModel):
     first_name: str
