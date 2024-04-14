@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session
 
 from ...models.research import Research, ResearchCategories
 from ...models.id_abc import Status
-from ..schemas.researches import ResearchCreateRequest
+from ..schemas.researches import ResearchCreateRequest, ResearchUpdateRequest
 from ..repositories.categories import CategoryRepository
 
 class ResearchRepository:
@@ -17,7 +17,7 @@ class ResearchRepository:
             title=research.title,
             description=research.description,
             file_id=research.file_id,
-            status=Status.DRAFT,
+            status=Status.SUBMITTED,
             is_published=False,
             author_id=user_id
         )
@@ -55,7 +55,7 @@ class ResearchRepository:
         
     
     @staticmethod
-    def update(db: Session, db_research: Research, research: ResearchCreateRequest):
+    def update(db: Session, db_research: Research, research: ResearchUpdateRequest):
         for key, value in research.model_dump(exclude_unset=True).items():
             setattr(db_research, key, value)
             

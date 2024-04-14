@@ -26,6 +26,5 @@ class UserRole(Enum):
 class Status(Enum):
     SUBMITTED = "Submitted"
     UNDER_REVIEW = "Under Review"
-    ACCEPTED = "Accepted"
     REJECTED = "Rejected"
     PUBLISHED = "Published"

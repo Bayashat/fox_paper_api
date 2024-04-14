@@ -36,16 +36,6 @@ class LoginSchema(BaseModel):
     password: str = "admin"
     
     
-class UserResponse(BaseModel):
-    first_name: str
-    last_name: str
-    email: EmailStr
-    password: str | None = None
-    gender: Gender | None = None
-    phone_number: PhoneNumber | None = None
-    date_of_birth: date | None = None
-    biography: str | None = None
-    role_id: int
     
 class UserUpdate(BaseModel):
     first_name: str | None = None
@@ -57,16 +47,3 @@ class UserUpdate(BaseModel):
     biography: str | None = None
     role_id: int | None = None
 
-    
-    
-class UserCreate(BaseModel):
-    first_name: Optional[str] = None
-    last_name: Optional[str] = None
-    email: Optional[EmailStr] = None
-    password: Optional[str] = None
-    gender: Optional[str] = None
-    phone_number: Optional[PhoneNumber] = None
-    date_of_birth: Optional[date] = None
-    biography: Optional[str] = None
-    role_id: Optional[int] = None
-    

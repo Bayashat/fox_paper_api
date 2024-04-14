@@ -4,7 +4,7 @@ from ...models.research import Research
 
 
 def get_pending_researches(db: Session):
-    reserches = db.query(Research).filter(Research.status == "PENDING").all()
+    reserches = db.query(Research).filter(Research.status == "SUBMITTED").all()
     if not reserches:
         return {"message": "No pending researches found"}
     return reserches

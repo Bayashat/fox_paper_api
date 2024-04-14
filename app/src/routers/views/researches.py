@@ -14,11 +14,11 @@ router = APIRouter()
 @router.get("/", response_model=List[ResearchResponse])
 def research_list(
     db: Session = Depends(get_db),
-    offset: int = 0,
+    skip: int = 0,
     limit: int = 10,
     user: UserModel = Depends(only_authorized_user)
 ):
-    researches = ResearchRepository.get_researches(db, limit, offset)
+    researches = ResearchRepository.get_researches(db, limit, skip)
     for research in researches:
         research.category_ids = CategoryRepository.get_by_research_id(db, research.id)
         
