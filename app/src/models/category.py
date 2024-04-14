@@ -9,6 +9,5 @@ class Category(Base):
     
     id: Mapped[intpk]
     name: Mapped[str]
-    description: Mapped[str]
     
     researches: Mapped[list["Research"]] = relationship(back_populates="categories", secondary="research_categories")

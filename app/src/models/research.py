@@ -16,12 +16,12 @@ class Research(Base):
     title: Mapped[str]
     description: Mapped[str]
     status: Mapped[Status]
-    is_published: Mapped[bool]
+    is_published: Mapped[bool] = mapped_column(default=False)
     created_at: Mapped[created_at]
     updated_at: Mapped[updated_at] 
     published_at: Mapped[datetime] = mapped_column(nullable=True)
     file_id: Mapped[int] = mapped_column(ForeignKey("files.id", ondelete="CASCADE"), unique=True)
-    author_id: Mapped[str]
+    author_id: Mapped[str] 
     
     
     categories: Mapped[list["Category"]] = relationship(back_populates="researches", secondary="research_categories")

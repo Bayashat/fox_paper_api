@@ -17,15 +17,13 @@ class Gender(Enum):
     OTHER = "Other"
     PREFER_NOT_TO_SAY = "Prefer not to say"  
 
-# create type user_role as ENUM('ADMIN', 'USER', 'RESEARCHER');
+# create type user_role as ENUM('USER', 'MODERATOR');
 
 class UserRole(Enum):
-    MODERATOR = "Moderator"
     USER = "User"
-    RESEARCHER = "Researcher"   
+    MODERATOR = "Moderator"
 
 class Status(Enum):
-    DRAFT = "Draft"
     SUBMITTED = "Submitted"
     UNDER_REVIEW = "Under Review"
     ACCEPTED = "Accepted"

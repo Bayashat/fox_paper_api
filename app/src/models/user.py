@@ -16,8 +16,8 @@ class User(Base):
     email: Mapped[str] = mapped_column(unique=True)
     password: Mapped[str]
     gender: Mapped[Gender]
-    phone_number: Mapped[str] = mapped_column(unique=True)
-    date_of_birth: Mapped[date]
+    phone_number: Mapped[str] = mapped_column(unique=True, nullable=True)
+    date_of_birth: Mapped[date] = mapped_column(nullable=True)
     biography: Mapped[str] = mapped_column(nullable=True)
     created_at: Mapped[created_at]
     updated_at: Mapped[updated_at]
