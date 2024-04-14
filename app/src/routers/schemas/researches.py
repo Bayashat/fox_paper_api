@@ -1,7 +1,5 @@
 from pydantic import BaseModel
 from datetime import datetime
-from fastapi import File, UploadFile
-from typing import Annotated
 
 from ...models.id_abc import Status
 

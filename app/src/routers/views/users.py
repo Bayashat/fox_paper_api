@@ -2,8 +2,8 @@ from typing import Callable, List
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
-from app.src.dependencies import get_db, JWTBearer, only_authorized_user
-from app.src.routers.repositories.users import UsersRepository
+from ...dependencies import get_db, only_authorized_user
+from ..repositories.users import UsersRepository
 from ..schemas.users import UserResponse, UserUpdate
 
 

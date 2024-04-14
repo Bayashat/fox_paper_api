@@ -4,7 +4,6 @@ from datetime import date
 
 from ..database import Base
 from .id_abc import intpk, Gender, created_at, updated_at
-
 from .role import Role
 
 class User(Base):

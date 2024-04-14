@@ -2,7 +2,6 @@ from fastapi import HTTPException, Depends
 from sqlalchemy.orm import Session
 from passlib.context import CryptContext
 
-from ...models.user import User
 from ..schemas.users import UserModel, SignupSchema
 from ..repositories.users import UsersRepository
 from ...dependencies import get_db

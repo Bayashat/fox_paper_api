@@ -1,5 +1,4 @@
 from ...models.category import Category
-from ...models.research import Research
 from ...models.research import ResearchCategories
 
 from sqlalchemy.orm import Session

@@ -1,5 +1,4 @@
 from sqlalchemy.orm import mapped_column, Mapped, relationship
-from datetime import datetime
 
 from ..database import Base
 from .id_abc import intpk, created_at, updated_at

@@ -1,5 +1,4 @@
-from sqlalchemy import String, Text, Integer
-from sqlalchemy.orm import mapped_column, Mapped, relationship
+from sqlalchemy.orm import Mapped, relationship
 
 from ..database import Base
 from .id_abc import intpk

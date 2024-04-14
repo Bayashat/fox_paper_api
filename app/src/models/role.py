@@ -1,7 +1,6 @@
 from sqlalchemy.orm import relationship,Mapped
 
 from ..database import Base
-# from .user import User
 from .id_abc import intpk, UserRole
 
 
