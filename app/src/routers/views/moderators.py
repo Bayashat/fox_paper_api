@@ -1,3 +1,4 @@
+from datetime import datetime
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
@@ -40,6 +41,8 @@ def publish_research(
     if not research:
         raise HTTPException(status_code=404, detail="Research not found")
     research.status = "PUBLISHED"
+    research.is_published = True
+    research.published_at = datetime.now()
     db.commit()
     return research
 
