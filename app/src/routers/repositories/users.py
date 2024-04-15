@@ -1,5 +1,6 @@
 from sqlalchemy.orm import Session
 from passlib.context import CryptContext
+from fastapi import HTTPException
 
 from ..schemas.users import SignupSchema, UserUpdate, UserModel
 from ...models.user import User
@@ -42,7 +43,10 @@ class UsersRepository:
     def update(db: Session, db_user: User, user: UserUpdate):
         if user.password:
             db_user.password = pwd_context.hash(user.password)
-        
+        # first, chech if role_id valid:
+        if user.role_id not in [1, 2]:
+            raise HTTPException(status_code=400, detail="Invalid role_id")
+            
         for key,value in user.model_dump(exclude_unset=True).items():
             setattr(db_user, key, value)
         
