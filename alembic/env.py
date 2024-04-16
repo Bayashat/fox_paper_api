@@ -4,13 +4,13 @@ from sqlalchemy import engine_from_config
 from sqlalchemy import pool
 
 from alembic import context
-from src.database import Base
-from src.models.category import Category
-from src.models.comment import Comment
-from src.models.file import File
-from src.models.research import Research
-from src.models.role import Role
-from src.models.user import User
+from app.src.database import Base
+from app.src.models.category import Category
+from app.src.models.comment import Comment
+from app.src.models.file import File
+from app.src.models.research import Research
+from app.src.models.role import Role
+from app.src.models.user import User
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
