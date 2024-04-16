@@ -1,0 +1,16 @@
+{
+    "$schema": "https://railway.app/railway.schema.json",
+    "build": {
+        "builder": "DOCKERFILE",
+        "watchPatterns": [
+            "/app/*.py",
+            "/app/**/*.py",
+            "Dockerfile",
+            "docker-compose.yml",
+            "requirements.txt"
+        ]
+    },
+    "deploy": {
+        "restartPolicyType": "ON_FAILURE"
+    }
+}
