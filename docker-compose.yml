@@ -22,7 +22,7 @@ services:
     ports:
       - "8000:8000"
     environment:
-      - DATABASE_URL=postgresql://admin:admin@172.22.0.2:5432/fox_paper
+      - DATABASE_URL=postgresql://admin:admin@localhost:5432/fox_paper
     networks:
       - fox_paper_network
 
