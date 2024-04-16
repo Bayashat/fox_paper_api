@@ -1,6 +1,6 @@
 from datetime import datetime
 from enum import Enum
-from typing import Annotated
+from typing_extensions import Annotated
 from sqlalchemy import text
 from sqlalchemy.orm import mapped_column
 
