@@ -3,32 +3,21 @@ services:
     image: postgres:14-alpine 
     container_name: fox_paper_db
     restart: always
-    volumes: 
-      - postgres_data:/var/lib/postgresql/data  # Persist database data
+    ports:
+      - "5432:5432"
     environment:
-      POSTGRES_USER: admin
-      POSTGRES_PASSWORD: admin
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: pa55word
       POSTGRES_DB: fox_paper
-    networks:
-      - fox_paper_network
 
-  app:
+  web:
     build: . 
-    container_name: fox_paper
-    image: fox_paper_api
+    container_name: fox_paper_api
     restart: always
     depends_on:
       - db
     ports:
       - "8000:8000"
     environment:
-      - DATABASE_URL=postgresql://admin:admin@localhost:5432/fox_paper
-    networks:
-      - fox_paper_network
-
-networks:
-  fox_paper_network:
-    driver: bridge
-
-volumes:
-  postgres_data: 
+      - DATABASE_URL=postgresql://postgres:pa55word@db:5432/fox_paper
+      - BACKEND_CORS_ORIGINS=["http://localhost:3000","http://localhost:8000"]

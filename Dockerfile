@@ -5,6 +5,11 @@ FROM python:3.11-alpine as requirements-stage
 # Set the working directory in the container
 WORKDIR /app
 
+ENV PYTHONDONTWRITEBYTECODE 1
+ENV PYTHONUNBUFFERED 1
+ENV ENVIRONMENT prod
+ENV TESTING 0
+
 # Copy the requirements file into the container
 COPY requirements.txt .
 
@@ -21,6 +26,11 @@ COPY . .
 
 # Expose the port that FastAPI will run on
 # EXPOSE 8000
+
+
+# Migrate alembic 
+# RUN alembic upgrade head
+
 
 # Command to run your application using uvicorn
 # CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
