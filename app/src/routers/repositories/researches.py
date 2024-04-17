@@ -3,6 +3,7 @@ from sqlalchemy.orm import Session
 
 from ...models.research import Research, ResearchCategories
 from ...models.id_abc import Status
+from ...models.file import File
 from ..schemas.researches import ResearchCreateRequest, ResearchUpdateRequest
 from ..repositories.categories import CategoryRepository
 
@@ -13,6 +14,10 @@ class ResearchRepository:
     
     @staticmethod
     def create_research(db: Session, research: ResearchCreateRequest, user_id: int):
+        # first, check if the file exists
+        if not db.query(File).filter(File.id == research.file_id).first():
+            raise HTTPException(status_code=404, detail=f"File with id {research.file_id} not found")
+
         db_research = Research(
             title=research.title,
             description=research.description,
@@ -24,7 +29,6 @@ class ResearchRepository:
         db.add(db_research)
         db.commit()
         db.refresh(db_research)
-
         
         categories = research.category_ids.split(',')
         
