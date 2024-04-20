@@ -66,17 +66,3 @@ def get_published_researches(
 ):
     researches = service_get_published_researches(db)
     return researches
-
-
-@router.delete("/researches/{research_id}")
-def delete_research(
-    research_id: int,
-    db: Session = Depends(get_db),
-    user=Depends(access_only_moderator),
-):
-    research = ResearchRepository.get_by_id(db, research_id)
-    if not research:
-        raise HTTPException(status_code=404, detail="Research not found")
-    db.delete(research)
-    db.commit()
-    return {"message": "Research deleted successfully"}
