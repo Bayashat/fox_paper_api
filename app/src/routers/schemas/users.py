@@ -21,19 +21,19 @@ class UserModel(BaseModel):
 
 
 class SignupSchema(BaseModel):
-    first_name: str = "admin"
-    last_name: str = "adminovich"
-    email: EmailStr = "admin@gmail.com"
-    password: str = "admin"
+    first_name: str
+    last_name: str
+    email: EmailStr
+    password: str
     gender: Gender | None
-    phone_number: PhoneNumber | None = "+77078788885"
+    phone_number: PhoneNumber | None
     date_of_birth: date | None = None
-    role_id: int = 1
+    role_id: int
     
     
 class LoginSchema(BaseModel):
-    email: EmailStr = "admin@gmail.com"
-    password: str = "admin"
+    email: EmailStr
+    password: str
     
     
     
