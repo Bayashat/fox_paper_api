@@ -7,7 +7,7 @@ services:
       - "5432:5432"
     environment:
       POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: pa55word
+      POSTGRES_PASSWORD: postgres
       POSTGRES_DB: fox_paper
 
   web:
@@ -19,5 +19,5 @@ services:
     ports:
       - "8000:8000"
     environment:
-      - DATABASE_URL=postgresql://postgres:pa55word@db:5432/fox_paper
+      - DATABASE_URL=postgresql://postgres:postgres@db:5432/fox_paper
       - BACKEND_CORS_ORIGINS=["http://localhost:3000","http://localhost:8000"]
