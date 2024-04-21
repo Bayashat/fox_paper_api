@@ -2,7 +2,7 @@ from typing import Callable, List
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
-from ...dependencies import get_db, only_authorized_user
+from ...dependencies import get_db, access_only_user, only_authorized_user
 from ..repositories.users import UsersRepository
 from ..schemas.users import UserModel, UserUpdate
 
@@ -20,7 +20,7 @@ def get_users(skip: int = 0, limit: int = 20, db: Session = Depends(get_db)):
 def get_user(
     user_id: int,
     db: Session = Depends(get_db),
-    auth: Callable = Depends(only_authorized_user)
+    auth: Callable = Depends(access_only_user)
 ):
     user = UsersRepository.get_by_id(db, user_id)
 
@@ -50,7 +50,7 @@ def update_user(
 def delete_user(
     user_id: int,
     db: Session = Depends(get_db),
-    auth: Callable = Depends(only_authorized_user)
+    auth: Callable = Depends(access_only_user)
 ):
     db_user = UsersRepository.get_by_id(db, user_id)
 

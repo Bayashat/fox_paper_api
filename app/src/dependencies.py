@@ -103,7 +103,7 @@ def access_only_user(
     if not existing_user:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
-            detail="User not found",
+            detail="User not authorized",
         )
 
     if existing_user.role_id != 1:
@@ -123,6 +123,6 @@ def only_authorized_user(
     if not existing_user:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
-            detail="User not found",
+            detail="User not authorized",
         )
     return UserModel.model_validate(existing_user.__dict__)

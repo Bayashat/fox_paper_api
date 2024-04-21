@@ -26,7 +26,7 @@ class SignupSchema(BaseModel):
     email: EmailStr
     password: str
     gender: Gender | None
-    phone_number: PhoneNumber | None
+    phone_number: PhoneNumber | None = None
     date_of_birth: date | None = None
     
     
