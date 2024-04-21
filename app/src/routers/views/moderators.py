@@ -2,10 +2,10 @@ from datetime import datetime
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
-from ...models.research import Research
 from ..repositories.researches import ResearchRepository
 from ...dependencies import get_db, access_only_moderator
 from ..services.moderators import get_pending_researches as service_get_pending_researches, get_published_researches as service_get_published_researches
+from ...models.id_abc import ResearchAction
 
 router = APIRouter()
 
@@ -17,45 +17,26 @@ def get_pending_researches(
     researches = service_get_pending_researches(db)
     return researches
 
-@router.put("/researches/{research_id}/review")
+@router.put("/researches/{research_id}/{action}")
 def review_research(
     research_id: int,
+    action: ResearchAction,
     db: Session = Depends(get_db),
     user=Depends(access_only_moderator),
 ):
     research = ResearchRepository.get_by_id(db, research_id)
     if not research:
         raise HTTPException(status_code=404, detail="Research not found")
-    research.status = "UNDER_REVIEW"
-    db.commit()
-    return research
+    
+    if action == ResearchAction.review:
+        research.status = "UNDER_REVIEW"
+    elif action == ResearchAction.publish:
+        research.status = "PUBLISHED"
+        research.is_published = True
+        research.published_at = datetime.now()
+    elif action == ResearchAction.reject:
+        research.status = "REJECTED"
 
-
-@router.put("/researches/{research_id}/publish")
-def publish_research(
-    research_id: int,
-    db: Session = Depends(get_db),
-    user=Depends(access_only_moderator),
-):
-    research = ResearchRepository.get_by_id(db, research_id)
-    if not research:
-        raise HTTPException(status_code=404, detail="Research not found")
-    research.status = "PUBLISHED"
-    research.is_published = True
-    research.published_at = datetime.now()
-    db.commit()
-    return research
-
-@router.put("/researches/{research_id}/reject")
-def reject_research(
-    research_id: int,
-    db: Session = Depends(get_db),
-    user=Depends(access_only_moderator),
-):
-    research = ResearchRepository.get_by_id(db, research_id)
-    if not research:
-        raise HTTPException(status_code=404, detail="Research not found")
-    research.status = "REJECTED"
     db.commit()
     return research
 

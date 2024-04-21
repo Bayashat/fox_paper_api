@@ -1,7 +1,7 @@
 from datetime import datetime
 from enum import Enum
 from typing_extensions import Annotated
-from sqlalchemy import text
+from sqlalchemy import func, text
 from sqlalchemy.orm import mapped_column
 
 intpk = Annotated[int, mapped_column(primary_key=True)]
@@ -28,3 +28,9 @@ class Status(Enum):
     UNDER_REVIEW = "Under Review"
     REJECTED = "Rejected"
     PUBLISHED = "Published"
+
+
+class ResearchAction(str, Enum):
+    review = "review"
+    publish = "publish"
+    reject = "reject"
