@@ -37,6 +37,7 @@ def review_research(
         research.published_at = datetime.now()
     elif action == ResearchAction.reject:
         research.status = "REJECTED"
+        research.is_published = False
 
     db.commit()
     return research

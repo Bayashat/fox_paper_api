@@ -10,7 +10,7 @@ from ..repositories.categories import CategoryRepository
 class ResearchRepository:
     @staticmethod
     def get_researches(db: Session, limit: int, offset: int):
-        return db.query(Research).limit(limit).offset(offset).all()
+        return db.query(Research).filter(Research.is_published == True).limit(limit).offset(offset).all()
     
     @staticmethod
     def create_research(db: Session, research: ResearchCreateRequest, user_id: int):
