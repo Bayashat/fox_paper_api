@@ -3,7 +3,6 @@ from datetime import datetime
 
 from ...models.id_abc import Status
 
-
 class ResearchResponse(BaseModel):
     id: int
     title: str
@@ -15,7 +14,7 @@ class ResearchResponse(BaseModel):
     updated_at: datetime
     published_at: datetime | None = None
     author_id: str
-    category_ids: str
+    category_ids: list[dict] | None = None
     
 
 class ResearchCreateRequest(BaseModel):

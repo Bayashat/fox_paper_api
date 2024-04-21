@@ -11,12 +11,3 @@ def research_create_validate(db: Session, research: ResearchCreateRequest):
         # error for such file already exists
         raise HTTPException(status_code=400, detail="File already exists")
     return True
-
-
-def research_update_validate(db: Session, research: ResearchCreateRequest):
-    existing_research = ResearchRepository.get_by_file_id(db, research.file_id)
-    if not existing_research:
-        raise HTTPException(status_code=404, detail="Research not found")
-    if ResearchRepository.get_by_file_id(db, research.file_id):
-        raise HTTPException(status_code=400, detail="File already exists")
-    return existing_research    

@@ -50,7 +50,7 @@ class ResearchRepository:
         db.refresh(db_research)
         
         # return research with categories
-        db_research.category_ids = research.category_ids
+        db_research.category_ids = categories
         return db_research
     
     @staticmethod
@@ -60,11 +60,32 @@ class ResearchRepository:
     
     @staticmethod
     def update(db: Session, db_research: Research, research: ResearchUpdateRequest):
+        # first, check category ids
+        if research.category_ids:
+            categories = research.category_ids.split(',')
+            for category_id in categories:
+                if not CategoryRepository.get_by_id(db, category_id):
+                    raise HTTPException(status_code=404, detail=f"Category with id {category_id} not found")
+                # first delete previous categories
+                db.query(ResearchCategories).filter(ResearchCategories.research_id == db_research.id).delete()
+                
+                # then, add the categories to the research
+                db_category = ResearchCategories(
+                    research_id=db_research.id,
+                    category_id=category_id
+                )
+                db.add(db_category)  
+            db.commit()
+            db.refresh(db_research)
+              
         for key, value in research.model_dump(exclude_unset=True).items():
+            if key == 'category_ids':
+                continue
             setattr(db_research, key, value)
             
         db.commit()
         db.refresh(db_research)
+        
         return db_research
     
     
