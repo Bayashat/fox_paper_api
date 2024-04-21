@@ -39,6 +39,8 @@ def create_research(
 ):
     if research_create_validate(db, research):
         db_research = ResearchRepository.create_research(db, research, user.id)
+        db_category_ids = CategoryRepository.get_by_research_id(db, db_research.id)
+        db_research.category_ids = db_category_ids
 
         return ResearchResponse.model_validate(db_research.__dict__)
     

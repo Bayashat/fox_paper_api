@@ -6,18 +6,19 @@ from ..repositories.researches import ResearchRepository
 from ...dependencies import get_db, access_only_moderator
 from ..services.moderators import get_pending_researches as service_get_pending_researches, get_published_researches as service_get_published_researches
 from ...models.id_abc import ResearchAction
+from ..schemas.researches import ResearchResponse
 
 router = APIRouter()
 
 
-@router.get("/researches/pending")
+@router.get("/researches/pending", response_model=list[ResearchResponse])
 def get_pending_researches(
     db: Session = Depends(get_db), user=Depends(access_only_moderator)
 ):
     researches = service_get_pending_researches(db)
     return researches
 
-@router.put("/researches/{research_id}/{action}")
+@router.put("/researches/{research_id}/{action}", response_model=ResearchResponse)
 def review_research(
     research_id: int,
     action: ResearchAction,
