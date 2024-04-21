@@ -21,7 +21,7 @@ class ResearchResponse(BaseModel):
 class ResearchCreateRequest(BaseModel):
     title: str
     description: str
-    file_id: int = 1
+    file_id: int
     category_ids: str
     
 

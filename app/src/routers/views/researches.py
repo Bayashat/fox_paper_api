@@ -57,7 +57,7 @@ def get_research(
     return ResearchResponse.model_validate(db_research.__dict__)
 
 
-@router.put("/{research_id}", response_model=ResearchUpdateRequest)
+@router.put("/{research_id}", response_model=ResearchResponse)
 def update_research(
     research_id: int,
     research: ResearchUpdateRequest,
@@ -66,7 +66,7 @@ def update_research(
 ):
     db_research = research_update_validate(db, research)
     new_research = ResearchRepository.update(db, db_research, research)
-    return ResearchUpdateRequest.model_validate(new_research.__dict__)
+    return ResearchResponse.model_validate(new_research.__dict__)
 
 
 @router.delete("/{research_id}")
