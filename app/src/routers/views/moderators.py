@@ -41,11 +41,3 @@ def review_research(
 
     db.commit()
     return research
-
-
-@router.get("/researches/published")
-def get_published_researches(
-    db: Session = Depends(get_db), user=Depends(access_only_moderator)
-):
-    researches = service_get_published_researches(db)
-    return researches
