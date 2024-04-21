@@ -95,6 +95,9 @@ def upgrade() -> None:
     op.execute(
         "INSERT INTO categories (name) VALUES ('Science'), ('Technology'), ('Medicine'), ('Social Sciences'), ('Humanities'),('Education'), ('Business and Economics'), ('Environment and Sustainability'), ('Arts and Design'), ('Interdiscliplinary')"
     )
+    op.execute(
+        "INSERT INTO files (file_path) VALUES ('/path/to/file1'), ('/path/to/file2'), ('/path/to/file3'), ('/path/to/file4'), ('/path/to/file5')"
+    )
     
     # ### end Alembic commands ###
 
