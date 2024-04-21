@@ -12,7 +12,7 @@ class UsersRepository:
     @staticmethod
     def create_user(db: Session, user: SignupSchema):
         hashed_password = pwd_context.hash(user.password)
-        new_user = User(**user.model_dump())
+        new_user = User(**user.model_dump(), role_id=1)
         new_user.password = hashed_password
         db.add(new_user)
         db.commit()

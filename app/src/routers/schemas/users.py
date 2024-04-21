@@ -28,7 +28,6 @@ class SignupSchema(BaseModel):
     gender: Gender | None
     phone_number: PhoneNumber | None
     date_of_birth: date | None = None
-    role_id: int
     
     
 class LoginSchema(BaseModel):
