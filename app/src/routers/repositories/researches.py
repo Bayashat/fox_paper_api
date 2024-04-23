@@ -9,8 +9,21 @@ from ..repositories.categories import CategoryRepository
 
 class ResearchRepository:
     @staticmethod
-    def get_researches(db: Session, limit: int, offset: int):
-        return db.query(Research).filter(Research.status == Status.PUBLISHED).limit(limit).offset(offset).all()
+    def get_researches(db: Session, limit: int, offset: int, search_text: str = None, category_ids: str = None, status: Status = None):
+        query = db.query(Research)
+        if status:
+            query = query.filter(Research.status == status)
+        
+        if search_text:
+            query = query.filter(Research.title.ilike(f"%{search_text}%") | Research.description.ilike(f"%{search_text}%"))
+
+        if category_ids:
+            categories = [int(id) for id in category_ids.split(',')]
+            query = query.join(ResearchCategories).filter(ResearchCategories.category_id.in_(categories))   
+
+        researches = query.limit(limit).offset(offset).all()
+        return researches
+    
     
     @staticmethod
     def create_research(db: Session, research: ResearchCreateRequest, user_id: int):
@@ -89,34 +102,11 @@ class ResearchRepository:
     def get_by_file_id(db: Session, file_id: int):
         return db.query(Research).filter(Research.file_id == file_id).first()
 
+    
     @staticmethod
-    def search(db: Session, search_text: str = None, category_ids: str = None):
-        if search_text and category_ids:
-            researches = db.query(Research).filter(Research.status == Status.PUBLISHED, Research.title.ilike(f"%{search_text}%") | Research.description.ilike(f"%{search_text}%")).all()
-                   
-            category_id_list = [int(id) for id in category_ids.split(',')]
-            
-            for research in researches:
-                research_category_ids = db.query(ResearchCategories).filter(ResearchCategories.research_id == research.id).all()
-                research_category_ids = [research_category.category_id for research_category in research_category_ids]
-                if not set(category_id_list).issubset(set(research_category_ids)):
-                    researches.remove(research)
-                
-            return researches
+    def get_under_review(db: Session):
+        return db.query(Research).filter(Research.status == Status.UNDER_REVIEW).all()
 
-        elif search_text:
-            return db.query(Research).filter(Research.status == Status.PUBLISHED, Research.title.ilike(f"%{search_text}%") | Research.description.ilike(f"%{search_text}%")).all()
-        
-        elif category_ids:
-            researches = db.query(Research).filter(Research.status == Status.PUBLISHED).all()
-            category_id_list = [int(id) for id in category_ids.split(',')]
-            for research in researches:
-                research_category_ids = db.query(ResearchCategories).filter(ResearchCategories.research_id == research.id).all()
-                research_category_ids = [research_category.category_id for research_category in research_category_ids]
-                if not set(category_id_list).issubset(set(research_category_ids)):
-                    researches.remove(research)
-                
-            return researches
-        else:
-            return db.query(Research).filter(Research.status == Status.PUBLISHED).all()
-        
+    @staticmethod
+    def get_rejected(db: Session):
+        return db.query(Research).filter(Research.status == Status.REJECTED).all()

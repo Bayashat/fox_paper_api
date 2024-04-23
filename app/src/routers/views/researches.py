@@ -8,6 +8,8 @@ from ..schemas.users import UserModel
 from ..schemas.researches import ResearchResponse, ResearchCreateRequest, ResearchUpdateRequest
 from ..repositories.categories import CategoryRepository
 from ..services.researches import research_create_validate
+from ...models.id_abc import Status
+
 
 router = APIRouter()
 
@@ -15,29 +17,21 @@ router = APIRouter()
 def research_list(
     db: Session = Depends(get_db),
     skip: int = 0,
-    limit: int = 10,
-    user: UserModel = Depends(only_authorized_user)
-):
-    researches = ResearchRepository.get_researches(db, limit, skip)
-    for research in researches:
-        research.category_ids = CategoryRepository.get_by_research_id(db, research.id)
-        
-    return [ResearchResponse.model_validate(research.__dict__) for research in researches]
-
-
-# implement a search endpoint by research title
-@router.get("/search", response_model=List[ResearchResponse])
-def search_research(
+    limit: int = 20,
     search_text: str | None = None,
     category_ids: str | None = None,
-    db: Session = Depends(get_db),
+    status: Status | None = None,
     user: UserModel = Depends(only_authorized_user)
 ):
-    researches = ResearchRepository.search(db, search_text, category_ids)
+    if not user.role_id == 2:
+        researches = ResearchRepository.get_researches(db, limit, skip, search_text, category_ids, status=None)
+    
+    researches = ResearchRepository.get_researches(db, limit, skip, search_text, category_ids, status)
     for research in researches:
         research.category_ids = CategoryRepository.get_by_research_id(db, research.id)
         
     return [ResearchResponse.model_validate(research.__dict__) for research in researches]
+
 
 # @router.post("/upload")
 # def upload_research(

@@ -4,6 +4,8 @@ from sqlalchemy.orm import Session
 from ..schemas.researches import ResearchCreateRequest
 from ..repositories.researches import ResearchRepository
 from ..repositories.categories import CategoryRepository
+from ...models.research import Research
+from ...models.id_abc import Status
 
 def research_create_validate(db: Session, research: ResearchCreateRequest):
     file = ResearchRepository.get_by_file_id(db, research.file_id)
@@ -20,3 +22,17 @@ def research_create_validate(db: Session, research: ResearchCreateRequest):
         if not category:
             raise HTTPException(status_code=400, detail="Invalid category_id")
     return True
+
+
+def get_pending_research_by_id(db: Session, research_id: int):
+    research = db.query(Research).filter(Research.status == Status.SUBMITTED, Research.id == research_id).first()
+    if not research:
+        raise HTTPException(status_code=404, detail="Research not found")
+    return research
+    
+
+def get_under_review_research_by_id(db: Session, research_id: int):
+    research = db.query(Research).filter(Research.status == Status.UNDER_REVIEW, Research.id == research_id).first()
+    if not research:
+        raise HTTPException(status_code=404, detail="Research not found")
+    return research
