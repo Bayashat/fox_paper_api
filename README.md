@@ -181,12 +181,11 @@ The API will be available at http://127.0.0.1:8000.
 * `GET /moderators/researches/published`: Get list of published research papers.
 
 ## Docker
-Build the Docker image:
+Build and run the docker image:
 ```bash
-docker-compose up -d --build
+docker compose up -d --build
 ```
+The API will be available at [http://0.0.0.0:8080.](http://127.0.0.1:8000/docs)
 
-The API will be available at http://0.0.0.0:8080.
-
-## Author
+## Backend Author
 Tokmukamet Bayashat
