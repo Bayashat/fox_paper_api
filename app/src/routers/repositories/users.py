@@ -44,7 +44,7 @@ class UsersRepository:
         if user.password:
             db_user.password = pwd_context.hash(user.password)
         
-        if user.role_id and user.role_id not in [1, 2]:
+        if user.role_id and user.role_id not in [1, 2] or user.role_id == 0:
             raise HTTPException(status_code=400, detail="Invalid role_id")
             
         for key,value in user.model_dump(exclude_unset=True).items():
