@@ -10,7 +10,7 @@ from ..repositories.categories import CategoryRepository
 class ResearchRepository:
     @staticmethod
     def get_researches(db: Session, limit: int, offset: int):
-        return db.query(Research).filter(Research.is_published == True).limit(limit).offset(offset).all()
+        return db.query(Research).filter(Research.status == Status.PUBLISHED).limit(limit).offset(offset).all()
     
     @staticmethod
     def create_research(db: Session, research: ResearchCreateRequest, user_id: int):
@@ -19,7 +19,6 @@ class ResearchRepository:
             description=research.description,
             file_id=research.file_id,
             status=Status.SUBMITTED,
-            is_published=False,
             author_id=user_id
         )
         db.add(db_research)
@@ -44,7 +43,8 @@ class ResearchRepository:
     
     @staticmethod
     def get_by_id(db: Session, research_id: int):
-        return db.query(Research).filter(Research.id == research_id).first()
+        # should be also published
+        return db.query(Research).filter(Research.id == research_id, Research.status == Status.PUBLISHED).first()
         
     
     @staticmethod
@@ -88,3 +88,10 @@ class ResearchRepository:
     @staticmethod
     def get_by_file_id(db: Session, file_id: int):
         return db.query(Research).filter(Research.file_id == file_id).first()
+
+    @staticmethod
+    def search(db: Session, search_text: str, category_ids: str):
+        # search by title or description and should be published and by category ids
+        category_ids = category_ids.split(',')
+        category_ids =  CategoryRepository.get_by_research_id(db, category_ids)
+        

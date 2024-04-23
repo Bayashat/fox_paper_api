@@ -16,7 +16,6 @@ class Research(Base):
     title: Mapped[str]
     description: Mapped[str]
     status: Mapped[Status]
-    is_published: Mapped[bool] = mapped_column(default=False)
     created_at: Mapped[created_at]
     updated_at: Mapped[updated_at] 
     published_at: Mapped[datetime] = mapped_column(nullable=True)

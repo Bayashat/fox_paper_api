@@ -8,7 +8,6 @@ class ResearchResponse(BaseModel):
     title: str
     description: str
     status: Status
-    is_published: bool
     file_id: int
     created_at: datetime
     updated_at: datetime
