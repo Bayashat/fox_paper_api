@@ -30,7 +30,7 @@ def get_user(
     return UserModel.model_validate(user.__dict__)
 
 
-@router.put("/{user_id}", response_model=UserModel)
+@router.patch("/{user_id}", response_model=UserModel)
 def update_user(
     user_id: int,
     user: UserUpdate,

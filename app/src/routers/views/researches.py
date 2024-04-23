@@ -68,7 +68,7 @@ def get_research(
     return ResearchResponse.model_validate(db_research.__dict__)
 
 
-@router.put("/{research_id}", response_model=ResearchResponse)
+@router.patch("/{research_id}", response_model=ResearchResponse)
 def update_research(
     research_id: int,
     research: ResearchUpdateRequest,

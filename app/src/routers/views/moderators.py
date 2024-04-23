@@ -12,7 +12,7 @@ from ..schemas.researches import ResearchResponse, ResearchActionRequest
 
 router = APIRouter()
 
-@router.put("/researches/{research_id}/", response_model=ResearchResponse)
+@router.patch("/researches/{research_id}/", response_model=ResearchResponse)
 def review_research(
     research_id: int,
     request: ResearchActionRequest,
