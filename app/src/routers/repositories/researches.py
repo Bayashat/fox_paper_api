@@ -28,6 +28,11 @@ class ResearchRepository:
     
     @staticmethod
     def create_research(db: Session, research: ResearchCreateRequest, user_id: int):
+        # check if file exists
+        file = db.query(File).filter(File.id == research.file_id).first()
+        if not file:
+            raise HTTPException(status_code=404, detail=f"File with id {research.file_id} not found")
+        
         db_research = Research(
             title=research.title,
             description=research.description,
@@ -57,13 +62,12 @@ class ResearchRepository:
     
     @staticmethod
     def get_by_id(db: Session, research_id: int):
-        # should be also published
         return db.query(Research).filter(Research.id == research_id, Research.status == Status.PUBLISHED).first()
         
     
     @staticmethod
     def update(db: Session, db_research: Research, research: ResearchUpdateRequest):
-        # first, check category ids
+        # check category ids
         if research.category_ids:
             categories = [int(id) for id in research.category_ids.split(',')]
             for category_id in categories:

@@ -76,6 +76,8 @@ def update_research(
     user: UserModel = Depends(access_only_user)
 ):
     db_research = ResearchRepository.get_by_id(db, research_id)
+    if not db_research:
+        raise HTTPException(status_code=404, detail="Research not found")
     new_research = ResearchRepository.update(db, db_research, research)
     if research.category_ids:
         new_research.category_ids = CategoryRepository.get_by_research_id(db, research_id)
