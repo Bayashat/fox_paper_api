@@ -25,7 +25,7 @@ class ResearchRepository:
         db.commit()
         db.refresh(db_research)
         
-        categories = research.category_ids.split(',')
+        categories = [int(id) for id in research.category_ids.split(',')]
         
         for category_id in categories:
             db_category = ResearchCategories(
@@ -51,7 +51,7 @@ class ResearchRepository:
     def update(db: Session, db_research: Research, research: ResearchUpdateRequest):
         # first, check category ids
         if research.category_ids:
-            categories = research.category_ids.split(',')
+            categories = [int(id) for id in research.category_ids.split(',')]
             for category_id in categories:
                 if not CategoryRepository.get_by_id(db, category_id):
                     raise HTTPException(status_code=404, detail=f"Category with id {category_id} not found")
@@ -90,8 +90,33 @@ class ResearchRepository:
         return db.query(Research).filter(Research.file_id == file_id).first()
 
     @staticmethod
-    def search(db: Session, search_text: str, category_ids: str):
-        # search by title or description and should be published and by category ids
-        category_ids = category_ids.split(',')
-        category_ids =  CategoryRepository.get_by_research_id(db, category_ids)
+    def search(db: Session, search_text: str = None, category_ids: str = None):
+        if search_text and category_ids:
+            researches = db.query(Research).filter(Research.status == Status.PUBLISHED, Research.title.ilike(f"%{search_text}%") | Research.description.ilike(f"%{search_text}%")).all()
+                   
+            category_id_list = [int(id) for id in category_ids.split(',')]
+            
+            for research in researches:
+                research_category_ids = db.query(ResearchCategories).filter(ResearchCategories.research_id == research.id).all()
+                research_category_ids = [research_category.category_id for research_category in research_category_ids]
+                if not set(category_id_list).issubset(set(research_category_ids)):
+                    researches.remove(research)
+                
+            return researches
+
+        elif search_text:
+            return db.query(Research).filter(Research.status == Status.PUBLISHED, Research.title.ilike(f"%{search_text}%") | Research.description.ilike(f"%{search_text}%")).all()
+        
+        elif category_ids:
+            researches = db.query(Research).filter(Research.status == Status.PUBLISHED).all()
+            category_id_list = [int(id) for id in category_ids.split(',')]
+            for research in researches:
+                research_category_ids = db.query(ResearchCategories).filter(ResearchCategories.research_id == research.id).all()
+                research_category_ids = [research_category.category_id for research_category in research_category_ids]
+                if not set(category_id_list).issubset(set(research_category_ids)):
+                    researches.remove(research)
+                
+            return researches
+        else:
+            return db.query(Research).filter(Research.status == Status.PUBLISHED).all()
         

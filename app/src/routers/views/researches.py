@@ -25,6 +25,20 @@ def research_list(
     return [ResearchResponse.model_validate(research.__dict__) for research in researches]
 
 
+# implement a search endpoint by research title
+@router.get("/search", response_model=List[ResearchResponse])
+def search_research(
+    search_text: str | None = None,
+    category_ids: str | None = None,
+    db: Session = Depends(get_db),
+    user: UserModel = Depends(only_authorized_user)
+):
+    researches = ResearchRepository.search(db, search_text, category_ids)
+    for research in researches:
+        research.category_ids = CategoryRepository.get_by_research_id(db, research.id)
+        
+    return [ResearchResponse.model_validate(research.__dict__) for research in researches]
+
 # @router.post("/upload")
 # def upload_research(
 #     file: UploadFile = File(...),

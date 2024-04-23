@@ -28,3 +28,4 @@ class ResearchUpdateRequest(BaseModel):
     description: str = None
     file_id: int = None
     category_ids: str = None
+    
