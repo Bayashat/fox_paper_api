@@ -6,7 +6,7 @@ from fastapi import Depends, Request, HTTPException, status
 from app.src.models.user import User
 from .routers.repositories.users import UsersRepository
 from .routers.schemas.users import UserModel
-from .config import ALGORITHM, SECRET_KEY
+from .config import settings
 
 
 # Database part
@@ -21,12 +21,12 @@ def get_db():
 class JWTRepo:
     @staticmethod
     def generate_token(data: dict):
-        return jwt.encode(data, SECRET_KEY, algorithm=ALGORITHM)
+        return jwt.encode(data, settings.SECRET_KEY, algorithm=settings.ALGORITHM)
 
     @staticmethod
     def decode_token(token: str):
         try:
-            return jwt.decode(token, SECRET_KEY, algorithms=ALGORITHM)
+            return jwt.decode(token, settings.SECRET_KEY, algorithms=settings.ALGORITHM)
         except Exception as e:
             print(f"Error decoding token: {e}")
             return None
@@ -55,7 +55,7 @@ class JWTBearer(HTTPBearer):
         is_token_valid: bool = False
 
         try:
-            payload = jwt.decode(jwt_token, SECRET_KEY, algorithms=ALGORITHM)
+            payload = jwt.decode(jwt_token, settings.SECRET_KEY, algorithms=settings.ALGORITHM)
         except:
             payload = None
 
@@ -93,6 +93,7 @@ def access_only_moderator(token_data: dict = Depends(get_token_data), db=Depends
         )
 
     return existing_user
+
 
 def access_only_user(
     token_data: dict = Depends(get_token_data), db=Depends(get_db)

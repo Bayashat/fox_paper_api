@@ -1,8 +1,5 @@
 from pydantic_settings import BaseSettings, SettingsConfigDict
-
-SECRET_KEY = "09d25e094faa6ca2556c818166b7a9563b93f7099f6f0f4caa6cf63b88e8d3e7"
-
-ALGORITHM = "HS256"
+import os 
 
 class Settings(BaseSettings):
     DB_HOST: str
@@ -10,6 +7,8 @@ class Settings(BaseSettings):
     DB_USER: str
     DB_PASS: str
     DB_NAME: str
+    SECRET_KEY: str
+    ALGORITHM: str
     
     @property
     def DATABASE_URL_asyncpg(self):
@@ -22,6 +21,6 @@ class Settings(BaseSettings):
         # postgresql+psycopg2://postgres:postgres@localhost:5432/sa
         return f"postgresql+psycopg2://{self.DB_USER}:{self.DB_PASS}@{self.DB_HOST}:{self.DB_PORT}/{self.DB_NAME}"
     
-    model_config = SettingsConfigDict(env_file="app/src/.env")
+    model_config = SettingsConfigDict(env_file=".env")
     
 settings = Settings()   
