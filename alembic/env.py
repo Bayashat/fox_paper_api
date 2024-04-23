@@ -4,6 +4,8 @@ from sqlalchemy import engine_from_config
 from sqlalchemy import pool
 
 from alembic import context
+
+from app.src.config import settings
 from app.src.database import Base
 from app.src.models.category import Category
 from app.src.models.comment import Comment
@@ -16,6 +18,7 @@ User
 # access to the values within the .ini file in use.
 config = context.config
 
+config.set_main_option('sqlalchemy.url', settings.DATABASE_URL_psycopg2)
 # Interpret the config file for Python logging.
 # This line sets up loggers basically.
 if config.config_file_name is not None:

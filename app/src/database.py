@@ -1,16 +1,13 @@
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
-from dotenv import load_dotenv
 
-import os
-
-load_dotenv()
+from .config import settings
 
 Base = declarative_base()
 
 engine = create_engine(
-    url = os.getenv("DATABASE_URL")
+    url = settings.DATABASE_URL_psycopg2
 )
 
 

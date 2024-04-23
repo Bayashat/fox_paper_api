@@ -19,9 +19,9 @@ class Settings(BaseSettings):
 
     @property
     def DATABASE_URL_psycopg2(self):
-        # postgresql+psycopg2://username:password@hostname:port/database
-        # return f"postgresql+psycopg2://{self.DB_USER}:{self.DB_PASS}@{self.DB_HOST}:{self.DB_PORT}/{self.DB_NAME}"
-        return f"postgresql+psycopg2://admin:admin@localhost:5432/fox_paper"
+        # postgresql+psycopg2://postgres:postgres@localhost:5432/sa
+        return f"postgresql+psycopg2://{self.DB_USER}:{self.DB_PASS}@{self.DB_HOST}:{self.DB_PORT}/{self.DB_NAME}"
     
-    model_config = SettingsConfigDict(env_file=".env")
+    model_config = SettingsConfigDict(env_file="app/src/.env")
     
+settings = Settings()   
