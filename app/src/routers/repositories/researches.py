@@ -14,6 +14,7 @@ class ResearchRepository:
         if status:
             query = query.filter(Research.status == status)
         
+        query = query.filter(Research.status == Status.PUBLISHED)
         if search_text:
             query = query.filter(Research.title.ilike(f"%{search_text}%") | Research.description.ilike(f"%{search_text}%"))
 

@@ -2,6 +2,7 @@ from pydantic import BaseModel
 from datetime import datetime
 
 from ...models.id_abc import Status
+from ...models.id_abc import ResearchAction
 
 class ResearchResponse(BaseModel):
     id: int
@@ -28,4 +29,6 @@ class ResearchUpdateRequest(BaseModel):
     description: str = None
     file_id: int = None
     category_ids: str = None
-    
+
+class ResearchActionRequest(BaseModel):
+    action: ResearchAction

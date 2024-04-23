@@ -31,6 +31,6 @@ class Status(Enum):
 
 
 class ResearchAction(str, Enum):
-    review = "review"
-    publish = "publish"
-    reject = "reject"
+    review = "Review"
+    publish = "Publish"
+    reject = "Reject"
