@@ -8,7 +8,7 @@ from ..schemas.users import UserModel
 from ..schemas.researches import ResearchResponse, ResearchCreateRequest, ResearchUpdateRequest
 from ..repositories.categories import CategoryRepository
 from ..services.researches import research_create_validate
-from ...models.id_abc import Status
+from ...models.enums import Status
 
 
 router = APIRouter()
@@ -21,7 +21,7 @@ def research_list(
     search_text: str | None = None,
     category_ids: str | None = None,
     status: Status | None = None,
-    user: UserModel = Depends(only_authorized_user)
+    user: UserModel = Depends(  only_authorized_user)
 ):
     if not user.role_id == 2:
         researches = ResearchRepository.get_researches(db, limit, skip, search_text, category_ids, status=None)

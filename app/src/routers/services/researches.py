@@ -5,7 +5,7 @@ from ..schemas.researches import ResearchCreateRequest
 from ..repositories.researches import ResearchRepository
 from ..repositories.categories import CategoryRepository
 from ...models.research import Research
-from ...models.id_abc import Status
+from ...models.enums import Status
 
 def research_create_validate(db: Session, research: ResearchCreateRequest):
     file = ResearchRepository.get_by_file_id(db, research.file_id)

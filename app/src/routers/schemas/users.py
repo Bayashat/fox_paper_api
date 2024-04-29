@@ -3,7 +3,7 @@ from pydantic_extra_types.phone_numbers import PhoneNumber
 from datetime import datetime, date
 from typing import Optional
 
-from ...models.id_abc import Gender, UserRole
+from ...models.enums import Gender, UserRole
 
 class UserModel(BaseModel):
     id: int

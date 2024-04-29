@@ -2,7 +2,7 @@ from fastapi import HTTPException
 from sqlalchemy.orm import Session
 
 from ...models.research import Research, ResearchCategories
-from ...models.id_abc import Status
+from ...models.enums import Status
 from ...models.file import File
 from ..schemas.researches import ResearchCreateRequest, ResearchUpdateRequest
 from ..repositories.categories import CategoryRepository

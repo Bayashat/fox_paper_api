@@ -13,7 +13,6 @@ from app.src.models.file import File
 from app.src.models.research import Research, ResearchCategories
 from app.src.models.role import Role
 from app.src.models.user import User
-User
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
 config = context.config

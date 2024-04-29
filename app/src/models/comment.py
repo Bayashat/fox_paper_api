@@ -1,21 +1,22 @@
 from sqlalchemy import ForeignKey
 from sqlalchemy.orm import relationship, mapped_column, Mapped
 
-from ..database import Base
-from .id_abc import intpk, created_at, updated_at
+from app.src.database import Base
+from app.src.models.annotates import intpk
+from app.src.models.mixins import TimestampMixin
+from .user import User
+from .research import Research
            
-class Comment(Base):
+class Comment(Base, TimestampMixin):
     __tablename__ = "comments"
 
     id: Mapped[intpk]
     content: Mapped[str]
-    created_at: Mapped[created_at]
-    updated_at: Mapped[updated_at] 
-    user_id: Mapped[int] = mapped_column(ForeignKey("users.id"))
-    research_id: Mapped[int] = mapped_column(ForeignKey("researches.id"))
+    user_id: Mapped[int] = mapped_column(ForeignKey("users.id", ondelete="CASCADE"))
+    research_id: Mapped[int] = mapped_column(ForeignKey("researches.id", ondelete="CASCADE"))
 
-    author: Mapped["User"] = relationship(back_populates="comments") 
-    research: Mapped["Research"] = relationship(back_populates="comments")
+    author: Mapped["User"] = relationship("User", back_populates="comments") 
+    research: Mapped["Research"] = relationship("Research", back_populates="comments")
     
 
 

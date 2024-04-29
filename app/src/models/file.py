@@ -1,15 +1,14 @@
 from sqlalchemy.orm import mapped_column, Mapped, relationship
 
-from ..database import Base
-from .id_abc import intpk, created_at, updated_at
+from app.src.database import Base
+from app.src.models.annotates import intpk, str_256
+from app.src.models.mixins import TimestampMixin
 
-class File(Base):
+class File(Base, TimestampMixin):
     __tablename__ = "files"
 
     id: Mapped[intpk]
-    file_path: Mapped[str] = mapped_column(unique=True)
-    created_at: Mapped[created_at]
-    updated_at: Mapped[updated_at] 
+    file_path: Mapped[str_256] = mapped_column(unique=True)
     
-    research: Mapped["Research"] = relationship(back_populates="files")
+    research: Mapped["Research"] = relationship("Research", back_populates="files")
     

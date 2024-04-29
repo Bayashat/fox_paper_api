@@ -1,27 +1,29 @@
-from sqlalchemy import ForeignKey
+from sqlalchemy import ForeignKey, String, Text
 from sqlalchemy.orm import Mapped, mapped_column, relationship
-from datetime import date
 
-from ..database import Base
-from .id_abc import intpk, Gender, created_at, updated_at
+from datetime import date
+from typing import List
+
+from app.src.database import Base
+from app.src.models.annotates import intpk, str_256
+from app.src.models.mixins import TimestampMixin
+from app.src.models.enums import Gender
 from .role import Role
 
-class User(Base):
+class User(Base, TimestampMixin):
     __tablename__ = "users"
 
     id: Mapped[intpk]
-    first_name: Mapped[str]
-    last_name: Mapped[str]
-    email: Mapped[str] = mapped_column(unique=True)
+    first_name: Mapped[str_256]
+    last_name: Mapped[str_256]
+    email: Mapped[str] = mapped_column(String(20), index=True, unique=True)
     password: Mapped[str]
     gender: Mapped[Gender]
-    phone_number: Mapped[str] = mapped_column(unique=True, nullable=True)
+    phone_number: Mapped[str] = mapped_column(String(50), index=True, unique=True, nullable=True)
     date_of_birth: Mapped[date] = mapped_column(nullable=True)
-    biography: Mapped[str] = mapped_column(nullable=True)
-    created_at: Mapped[created_at]
-    updated_at: Mapped[updated_at]
+    biography: Mapped[str] = mapped_column(Text, nullable=True)
     role_id: Mapped[int] = mapped_column(ForeignKey("roles.id", ondelete="SET NULL"))
     
-    role: Mapped["Role"] = relationship(back_populates="users")
-    comments: Mapped[list["Comment"]] = relationship(back_populates="author")
+    role: Mapped["Role"] = relationship("Role", back_populates="users")
+    comments: Mapped[List["Comment"]] = relationship("Comment", back_populates="author")
     

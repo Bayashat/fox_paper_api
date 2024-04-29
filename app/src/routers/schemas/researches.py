@@ -1,8 +1,8 @@
 from pydantic import BaseModel
 from datetime import datetime
 
-from ...models.id_abc import Status
-from ...models.id_abc import ResearchAction
+from ...models.enums import Status
+from ...models.enums import ResearchAction
 
 class ResearchResponse(BaseModel):
     id: int

@@ -1,8 +1,8 @@
-"""created tables
+"""created all tables
 
-Revision ID: d8172dd06200
+Revision ID: 4b8c0642a303
 Revises: 
-Create Date: 2024-04-17 14:52:16.313134
+Create Date: 2024-04-29 17:35:22.965265
 
 """
 from typing import Sequence, Union
@@ -12,7 +12,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision: str = 'd8172dd06200'
+revision: str = '4b8c0642a303'
 down_revision: Union[str, None] = None
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
@@ -28,8 +28,8 @@ def upgrade() -> None:
     op.create_table('files',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('file_path', sa.String(), nullable=False),
-    sa.Column('created_at', sa.DateTime(), server_default=sa.text("(TIMEZONE('utc', now()))"), nullable=False),
-    sa.Column('updated_at', sa.DateTime(), server_default=sa.text("(TIMEZONE('utc', now()))"), nullable=False),
+    sa.Column('created_at', sa.DateTime(), server_default=sa.text("TIMEZONE('utc', now())"), nullable=False),
+    sa.Column('updated_at', sa.DateTime(), server_default=sa.text("TIMEZONE('utc', now())"), nullable=False),
     sa.PrimaryKeyConstraint('id'),
     sa.UniqueConstraint('file_path')
     )
@@ -41,14 +41,13 @@ def upgrade() -> None:
     op.create_table('researches',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('title', sa.String(), nullable=False),
-    sa.Column('description', sa.String(), nullable=False),
-    sa.Column('status', sa.Enum('SUBMITTED', 'UNDER_REVIEW', 'REJECTED', 'PUBLISHED', name='status'), nullable=False),
-    sa.Column('is_published', sa.Boolean(), nullable=False),
-    sa.Column('created_at', sa.DateTime(), server_default=sa.text("(TIMEZONE('utc', now()))"), nullable=False),
-    sa.Column('updated_at', sa.DateTime(), server_default=sa.text("(TIMEZONE('utc', now()))"), nullable=False),
+    sa.Column('description', sa.Text(), nullable=False),
+    sa.Column('status', sa.Enum('SUBMITTED', 'UNDER_REVIEW', 'REJECTED', 'PUBLISHED', name='status'), nullable=True),
     sa.Column('published_at', sa.DateTime(), nullable=True),
     sa.Column('file_id', sa.Integer(), nullable=False),
     sa.Column('author_id', sa.String(), nullable=False),
+    sa.Column('created_at', sa.DateTime(), server_default=sa.text("TIMEZONE('utc', now())"), nullable=False),
+    sa.Column('updated_at', sa.DateTime(), server_default=sa.text("TIMEZONE('utc', now())"), nullable=False),
     sa.ForeignKeyConstraint(['file_id'], ['files.id'], ondelete='CASCADE'),
     sa.PrimaryKeyConstraint('id'),
     sa.UniqueConstraint('file_id')
@@ -57,29 +56,29 @@ def upgrade() -> None:
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('first_name', sa.String(), nullable=False),
     sa.Column('last_name', sa.String(), nullable=False),
-    sa.Column('email', sa.String(), nullable=False),
+    sa.Column('email', sa.String(length=20), nullable=False),
     sa.Column('password', sa.String(), nullable=False),
     sa.Column('gender', sa.Enum('MALE', 'FEMALE', 'OTHER', 'PREFER_NOT_TO_SAY', name='gender'), nullable=False),
-    sa.Column('phone_number', sa.String(), nullable=True),
+    sa.Column('phone_number', sa.String(length=50), nullable=True),
     sa.Column('date_of_birth', sa.Date(), nullable=True),
-    sa.Column('biography', sa.String(), nullable=True),
-    sa.Column('created_at', sa.DateTime(), server_default=sa.text("(TIMEZONE('utc', now()))"), nullable=False),
-    sa.Column('updated_at', sa.DateTime(), server_default=sa.text("(TIMEZONE('utc', now()))"), nullable=False),
+    sa.Column('biography', sa.Text(), nullable=True),
     sa.Column('role_id', sa.Integer(), nullable=False),
+    sa.Column('created_at', sa.DateTime(), server_default=sa.text("TIMEZONE('utc', now())"), nullable=False),
+    sa.Column('updated_at', sa.DateTime(), server_default=sa.text("TIMEZONE('utc', now())"), nullable=False),
     sa.ForeignKeyConstraint(['role_id'], ['roles.id'], ondelete='SET NULL'),
-    sa.PrimaryKeyConstraint('id'),
-    sa.UniqueConstraint('email'),
-    sa.UniqueConstraint('phone_number')
+    sa.PrimaryKeyConstraint('id')
     )
+    op.create_index(op.f('ix_users_email'), 'users', ['email'], unique=True)
+    op.create_index(op.f('ix_users_phone_number'), 'users', ['phone_number'], unique=True)
     op.create_table('comments',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('content', sa.String(), nullable=False),
-    sa.Column('created_at', sa.DateTime(), server_default=sa.text("(TIMEZONE('utc', now()))"), nullable=False),
-    sa.Column('updated_at', sa.DateTime(), server_default=sa.text("(TIMEZONE('utc', now()))"), nullable=False),
     sa.Column('user_id', sa.Integer(), nullable=False),
     sa.Column('research_id', sa.Integer(), nullable=False),
-    sa.ForeignKeyConstraint(['research_id'], ['researches.id'], ),
-    sa.ForeignKeyConstraint(['user_id'], ['users.id'], ),
+    sa.Column('created_at', sa.DateTime(), server_default=sa.text("TIMEZONE('utc', now())"), nullable=False),
+    sa.Column('updated_at', sa.DateTime(), server_default=sa.text("TIMEZONE('utc', now())"), nullable=False),
+    sa.ForeignKeyConstraint(['research_id'], ['researches.id'], ondelete='CASCADE'),
+    sa.ForeignKeyConstraint(['user_id'], ['users.id'], ondelete='CASCADE'),
     sa.PrimaryKeyConstraint('id')
     )
     op.create_table('research_categories',
@@ -96,7 +95,7 @@ def upgrade() -> None:
         "INSERT INTO categories (name) VALUES ('Science'), ('Technology'), ('Medicine'), ('Social Sciences'), ('Humanities'),('Education'), ('Business and Economics'), ('Environment and Sustainability'), ('Arts and Design'), ('Interdiscliplinary')"
     )
     op.execute(
-        "INSERT INTO files (file_path) VALUES ('/path/to/file1'), ('/path/to/file2'), ('/path/to/file3'), ('/path/to/file4'), ('/path/to/file5')"
+        "INSERT INTO files (file_path) VALUES ('/path/to/file1'), ('/path/to/file2'), ('/path/to/file3'), ('/path/to/file4'), ('/path/to/file5'), ('/path/to/file6'), ('/path/to/file7'), ('/path/to/file8'), ('/path/to/file9'), ('/path/to/file10')"
     )
     
     # ### end Alembic commands ###
@@ -106,6 +105,8 @@ def downgrade() -> None:
     # ### commands auto generated by Alembic - please adjust! ###
     op.drop_table('research_categories')
     op.drop_table('comments')
+    op.drop_index(op.f('ix_users_phone_number'), table_name='users')
+    op.drop_index(op.f('ix_users_email'), table_name='users')
     op.drop_table('users')
     op.drop_table('researches')
     op.drop_table('roles')

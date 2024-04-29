@@ -1,12 +1,15 @@
 from sqlalchemy.orm import Mapped, relationship
 
-from ..database import Base
-from .id_abc import intpk
+from typing import List
+
+from app.src.database import Base
+from app.src.models.annotates import intpk, str_256
+
     
 class Category(Base):
     __tablename__ = "categories"
     
     id: Mapped[intpk]
-    name: Mapped[str]
+    name: Mapped[str_256]
     
-    researches: Mapped[list["Research"]] = relationship(back_populates="categories", secondary="research_categories")
+    researches: Mapped[List["Research"]] = relationship(back_populates="categories", secondary="research_categories")
