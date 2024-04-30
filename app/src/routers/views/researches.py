@@ -16,6 +16,7 @@ from app.src.routers.schemas.researches import (
 )
 from app.src.routers.services.researches import research_create_validate
 from app.src.routers.services.researches import check_reserach_exists
+from app.src.routers.services.users import check_user_validate_by_researchID
 
 
 router = APIRouter(prefix="/researches", tags=["researches"])
@@ -86,8 +87,10 @@ def update_research(
 
 @router.delete("/{research_id}", response_model=ResearchResponse)
 def delete_research(
-    research_id: int, db: Session = Depends(get_db), user: UserModel = Depends(access_only_user)
+    research_id: int, db: Session = Depends(get_db), 
+    user: UserModel = Depends(only_authorized_user)
 ):
     check_reserach_exists(db, research_id)
+    check_user_validate_by_researchID(db, user, research_id)
     research = ResearchRepository.delete(db, research_id)
     return ResearchResponse.model_validate(research.__dict__)

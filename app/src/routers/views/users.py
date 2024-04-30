@@ -7,6 +7,7 @@ from typing import Callable, List
 from app.src.dependencies import get_db, access_only_user, only_authorized_user
 from app.src.routers.repositories.users import UsersRepository
 from app.src.routers.schemas.users import UserModel, UserUpdate
+from app.src.routers.services.users import check_user_validate_by_userID
 
 
 router = APIRouter(prefix="/users", tags=["users"])
@@ -45,7 +46,6 @@ def delete_user(
     db: Session = Depends(get_db),
     auth: Callable = Depends(access_only_user)
 ):
-    db_user = UsersRepository.get_by_id(db, user_id)
-
-    UsersRepository.delete(db, db_user)
+    check_user_validate_by_userID(db, user_id, auth)
+    db_user = UsersRepository.delete(db, user_id)
     return UserModel.model_validate(db_user.__dict__)

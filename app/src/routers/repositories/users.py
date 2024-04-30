@@ -54,6 +54,7 @@ class UsersRepository:
         return db_user
 
     @staticmethod
-    def delete(db: Session, db_user: User):
+    def delete(db: Session, user_id: int):
+        db_user = UsersRepository.get_by_id(db, user_id)
         delete_commit(db, db_user)
         return db_user
