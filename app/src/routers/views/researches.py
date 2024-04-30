@@ -78,6 +78,8 @@ def update_research(
     db: Session = Depends(get_db),
     user: UserModel = Depends(access_only_user),
 ):
+    check_reserach_exists(db, research_id)
+    check_user_validate_by_researchID(db, user, research_id)
     db_research = ResearchRepository.get_by_id(db, research_id)
     new_research = ResearchRepository.update(db, db_research, research)
     if research.category_ids:

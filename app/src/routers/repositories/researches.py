@@ -24,8 +24,8 @@ class ResearchRepository:
             query = query.filter(Research.title.ilike(f"%{search_text}%") | Research.description.ilike(f"%{search_text}%"))
 
         if category_ids:
-            categories = [int(id) for id in category_ids.split(',')]
-            query = query.join(ResearchCategories).filter(ResearchCategories.category_id.in_(categories))   
+            category_list = [int(id) for id in category_ids.split(',')]
+            query = query.join(ResearchCategories).filter(ResearchCategories.category_id.in_(category_list))   
 
         researches = query.limit(limit).offset(offset).all()
         return researches
@@ -60,7 +60,6 @@ class ResearchRepository:
     
     @staticmethod
     def get_by_id(db: Session, research_id: int):
-        check_reserach_exists(db, research_id)
         return db.query(Research).filter(Research.id == research_id, Research.status == Status.PUBLISHED).first()
         
     

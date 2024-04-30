@@ -47,12 +47,10 @@ def check_role_id(role_id: int):
         raise HTTPException(status_code=400, detail="Invalid role_id")
     
 def check_user_validate_by_researchID(db: Session, research_id: int, user: UserModel):
-    # to delete research, user must be the owner or the moderator
     author_id = db.query(Research).filter(Research.id == research_id).first().author_id
     if user.role_id == 1 and user.id != author_id:
         raise HTTPException(status_code=403, detail="You are not authorized to delete this research")
 
 def check_user_validate_by_userID(db: Session, user_id: int, user: UserModel):
-    # to delete user, user must be the owner or the moderator
     if user.role_id == 1 and user.id != user_id:
         raise HTTPException(status_code=403, detail="You are not authorized to delete this user")
