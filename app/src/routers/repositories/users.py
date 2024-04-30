@@ -1,23 +1,16 @@
 from sqlalchemy.orm import Session
-from passlib.context import CryptContext
 from fastapi import HTTPException
 
-from ..schemas.users import SignupSchema, UserUpdate, UserModel
+from ..schemas.users import SignupSchema, UserUpdate
 from ...models.user import User
+from app.src.routers.services.users import check_user_not_exists, hash_and_save_user
 
-
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 class UsersRepository:
     @staticmethod
     def create_user(db: Session, user: SignupSchema):
-        hashed_password = pwd_context.hash(user.password)
-        new_user = User(**user.model_dump(), role_id=1)
-        new_user.password = hashed_password
-        db.add(new_user)
-        db.commit()
-        db.refresh(new_user)
-
+        check_user_not_exists(db, user)
+        new_user = hash_and_save_user(db, user)
         return new_user
     
     @staticmethod

@@ -1,5 +1,5 @@
 from pydantic import BaseModel
-from ..schemas.users import UserModel
+from app.src.routers.schemas.users import UserModel
 
 class AuthResponse(BaseModel):
     access_token: str
