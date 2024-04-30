@@ -1,11 +1,12 @@
 from sqlalchemy.orm import Session
-from ...models.comment import Comment
-from ..schemas.comments import CommentCreateRequest
+
+from app.src.models.comment import Comment
+from app.src.routers.schemas.comments import CommentCreateRequest
+from app.src.routers.services.db import add_commit_refresh, delete_commit
 
 class CommentsRepository:
-    
     @staticmethod
-    def get_comments(db: Session, research_id: int, limit: int, offset: int):
+    def get_comments(db: Session, research_id: int, offset: int, limit: int):
         return db.query(Comment).filter(Comment.research_id == research_id).limit(limit).offset(offset).all()
     
     @staticmethod
@@ -15,18 +16,11 @@ class CommentsRepository:
             research_id=research_id,
             user_id=user_id
         )
-        db.add(db_comment)
-        db.commit()
-        db.refresh(db_comment)
+        add_commit_refresh(db, db_comment)
         return db_comment
-    
-    @staticmethod
-    def get_comment(db: Session, research_id: int, comment_id: int):
-        return db.query(Comment).filter(Comment.research_id == research_id, Comment.id == comment_id).first()
     
     @staticmethod
     def delete_comment(db: Session, research_id: int, comment_id: int):
         db_comment = db.query(Comment).filter(Comment.research_id == research_id, Comment.id == comment_id).first()
-        db.delete(db_comment)
-        db.commit()
+        delete_commit(db, db_comment)
         return db_comment

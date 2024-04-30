@@ -1,12 +1,15 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends
+
 from sqlalchemy.orm import Session
+
 from typing import List
 
-from ...dependencies import get_db, only_authorized_user
-from ..schemas.comments import CommentResponse, CommentCreateRequest
-from ..schemas.users import UserModel
-from ..repositories.comments import CommentsRepository
-from ..repositories.researches import ResearchRepository
+from app.src.dependencies import get_db, only_authorized_user
+from app.src.routers.repositories.comments import CommentsRepository
+from app.src.routers.schemas.comments import CommentResponse, CommentCreateRequest
+from app.src.routers.schemas.users import UserModel
+from app.src.routers.services.researches import check_reserach_exists
+from app.src.routers.services.comment import check_comment_exists
 
 router = APIRouter()
 
@@ -18,9 +21,8 @@ def get_comments(
     db: Session = Depends(get_db),
     user: UserModel = Depends(only_authorized_user)
 ):
-    if not ResearchRepository.get_by_id(db, research_id):
-        raise HTTPException(status_code=404, detail="Research not found")
-    comments = CommentsRepository.get_comments(db, research_id, limit, offset)
+    check_reserach_exists(db, research_id)
+    comments = CommentsRepository.get_comments(db, research_id, offset, limit)
     return [CommentResponse.model_validate(comment.__dict__) for comment in comments]
 
 
@@ -31,41 +33,20 @@ def create_comment(
     db: Session = Depends(get_db),
     user: UserModel = Depends(only_authorized_user)
 ):
-    if not ResearchRepository.get_by_id(db, research_id):
-        raise HTTPException(status_code=404, detail="Research not found")
+    check_reserach_exists(db, research_id)
     comment = CommentsRepository.create_comment(db, research_id, comment, user.id)
     return CommentResponse.model_validate(comment.__dict__)
 
 
-@router.get("/{research_id}/comments/{comment_id}", response_model=CommentResponse)
-def get_comment(
-    research_id: int,
-    comment_id: int,
-    db: Session = Depends(get_db),
-    user: UserModel = Depends(only_authorized_user)
-):
-    if not ResearchRepository.get_by_id(db, research_id):
-        raise HTTPException(status_code=404, detail="Research not found")
-    
-    comment = CommentsRepository.get_comment(db, research_id, comment_id)
-    if not comment:
-        raise HTTPException(status_code=404, detail="Comment not found")
-    
-    return CommentResponse.model_validate(comment.__dict__)
-
-@router.delete("/{research_id}/comments/{comment_id}")
+@router.delete("/{research_id}/comments/{comment_id}", response_model=CommentResponse)
 def delete_comment(
     research_id: int,
     comment_id: int,
     db: Session = Depends(get_db),
     user: UserModel = Depends(only_authorized_user)
 ):
-    if not ResearchRepository.get_by_id(db, research_id):
-        raise HTTPException(status_code=404, detail="Research not found")
+    check_reserach_exists(db, research_id)
+    check_comment_exists(db, research_id, comment_id)
+    comment = CommentsRepository.delete_comment(db, research_id, comment_id)
     
-    db_comment = CommentsRepository.get_comment(db, research_id, comment_id)
-    if not db_comment:
-        raise HTTPException(status_code=404, detail="Comment not found")
-    CommentsRepository.delete_comment(db, research_id, comment_id)
-    
-    return {"message": "Comment deleted successfully"}
+    return CommentResponse.model_validate(comment.__dict__)
