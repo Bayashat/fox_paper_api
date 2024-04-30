@@ -11,7 +11,7 @@ from app.src.routers.schemas.users import UserModel
 from app.src.routers.services.researches import check_reserach_exists
 from app.src.routers.services.comment import check_comment_exists
 
-router = APIRouter()
+router = APIRouter(prefix="/researches", tags=["comments"])
 
 @router.get("/{research_id}/comments", response_model=List[CommentResponse])
 def get_comments(
