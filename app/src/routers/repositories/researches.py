@@ -1,11 +1,15 @@
 from fastapi import HTTPException
+
 from sqlalchemy.orm import Session
 
-from ...models.research import Research, ResearchCategories
-from ...models.enums import Status
-from ...models.file import File
-from ..schemas.researches import ResearchCreateRequest, ResearchUpdateRequest
-from ..repositories.categories import CategoryRepository
+from app.src.models.research import Research, ResearchCategories
+from app.src.models.enums import Status
+from app.src.routers.repositories.categories import CategoryRepository
+from app.src.routers.schemas.researches import ResearchCreateRequest, ResearchUpdateRequest
+from app.src.routers.services.file import check_file_exists
+from app.src.routers.services.researches import check_reserach_exists
+from app.src.routers.services.db import add_commit_refresh, delete_commit
+
 
 class ResearchRepository:
     @staticmethod
@@ -13,8 +17,9 @@ class ResearchRepository:
         query = db.query(Research)
         if status:
             query = query.filter(Research.status == status)
-        
-        query = query.filter(Research.status == Status.PUBLISHED)
+        else:
+            query = query.filter(Research.status == Status.PUBLISHED)
+            
         if search_text:
             query = query.filter(Research.title.ilike(f"%{search_text}%") | Research.description.ilike(f"%{search_text}%"))
 
@@ -28,11 +33,7 @@ class ResearchRepository:
     
     @staticmethod
     def create_research(db: Session, research: ResearchCreateRequest, user_id: int):
-        # check if file exists
-        file = db.query(File).filter(File.id == research.file_id).first()
-        if not file:
-            raise HTTPException(status_code=404, detail=f"File with id {research.file_id} not found")
-        
+        check_file_exists(db, research.file_id)
         db_research = Research(
             title=research.title,
             description=research.description,
@@ -40,13 +41,12 @@ class ResearchRepository:
             status=Status.SUBMITTED,
             author_id=user_id
         )
-        db.add(db_research)
-        db.commit()
-        db.refresh(db_research)
+        add_commit_refresh(db, db_research)
+
+        # add category ids to db
+        category_id_list = [int(id) for id in research.category_ids.split(',')]
         
-        categories = [int(id) for id in research.category_ids.split(',')]
-        
-        for category_id in categories:
+        for category_id in category_id_list:
             db_category = ResearchCategories(
                 research_id=db_research.id,
                 category_id=category_id
@@ -56,12 +56,11 @@ class ResearchRepository:
         db.commit()
         db.refresh(db_research)
         
-        # return research with categories
-        db_research.category_ids = categories
         return db_research
     
     @staticmethod
     def get_by_id(db: Session, research_id: int):
+        check_reserach_exists(db, research_id)
         return db.query(Research).filter(Research.id == research_id, Research.status == Status.PUBLISHED).first()
         
     
@@ -99,19 +98,6 @@ class ResearchRepository:
     @staticmethod
     def delete(db: Session, research_id: int):
         db_research = db.query(Research).filter(Research.id == research_id).first()
-        db.delete(db_research)
-        db.commit()
+        delete_commit(db, db_research)
         return db_research
-    
-    @staticmethod
-    def get_by_file_id(db: Session, file_id: int):
-        return db.query(Research).filter(Research.file_id == file_id).first()
 
-    
-    @staticmethod
-    def get_under_review(db: Session):
-        return db.query(Research).filter(Research.status == Status.UNDER_REVIEW).all()
-
-    @staticmethod
-    def get_rejected(db: Session):
-        return db.query(Research).filter(Research.status == Status.REJECTED).all()

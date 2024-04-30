@@ -1,17 +1,25 @@
-from fastapi import APIRouter, Depends, status, HTTPException
+from fastapi import APIRouter, Depends, status
+
 from sqlalchemy.orm import Session
+
 from typing import List
 
-from ...dependencies import get_db, access_only_user, only_authorized_user
-from ..repositories.researches import ResearchRepository
-from ..schemas.users import UserModel
-from ..schemas.researches import ResearchResponse, ResearchCreateRequest, ResearchUpdateRequest
-from ..repositories.categories import CategoryRepository
-from ..services.researches import research_create_validate
-from ...models.enums import Status
+from app.src.dependencies import get_db, access_only_user, only_authorized_user
+from app.src.models.enums import Status
+from app.src.routers.repositories.researches import ResearchRepository
+from app.src.routers.repositories.categories import CategoryRepository
+from app.src.routers.schemas.users import UserModel
+from app.src.routers.schemas.researches import (
+    ResearchResponse,
+    ResearchCreateRequest,
+    ResearchUpdateRequest,
+)
+from app.src.routers.services.researches import research_create_validate
+from app.src.routers.services.researches import check_reserach_exists
 
 
-router = APIRouter()
+router = APIRouter(prefix="/researches", tags=["researches"])
+
 
 @router.get("/", response_model=List[ResearchResponse])
 def research_list(
@@ -21,49 +29,43 @@ def research_list(
     search_text: str | None = None,
     category_ids: str | None = None,
     status: Status | None = None,
-    user: UserModel = Depends(  only_authorized_user)
+    user: UserModel = Depends(only_authorized_user),
 ):
-    if not user.role_id == 2:
-        researches = ResearchRepository.get_researches(db, limit, skip, search_text, category_ids, status=None)
-    
-    researches = ResearchRepository.get_researches(db, limit, skip, search_text, category_ids, status)
+    if user.role_id == 2:
+        researches = ResearchRepository.get_researches(
+            db, limit, skip, search_text, category_ids, status
+        )
+    else:
+        researches = ResearchRepository.get_researches(
+            db, limit, skip, search_text, category_ids, Status.PUBLISHED
+        )
     for research in researches:
         research.category_ids = CategoryRepository.get_by_research_id(db, research.id)
-        
+
     return [ResearchResponse.model_validate(research.__dict__) for research in researches]
 
 
-# @router.post("/upload")
-# def upload_research(
-#     file: UploadFile = File(...),
-#     db: Session = Depends(get_db)
-# ):
-
-@router.post("/", response_model=ResearchResponse, status_code=status.HTTP_201_CREATED)
+@router.post("/", status_code=status.HTTP_201_CREATED, response_model=ResearchResponse)
 def create_research(
     research: ResearchCreateRequest,
     db: Session = Depends(get_db),
-    user: UserModel = Depends(access_only_user)
+    user: UserModel = Depends(access_only_user),
 ):
-    if research_create_validate(db, research):
-        db_research = ResearchRepository.create_research(db, research, user.id)
-        db_category_ids = CategoryRepository.get_by_research_id(db, db_research.id)
-        db_research.category_ids = db_category_ids
+    research_create_validate(db, research)
+    db_research = ResearchRepository.create_research(db, research, user.id)
+    db_category_ids = CategoryRepository.get_by_research_id(db, db_research.id)
+    db_research.category_ids = db_category_ids
 
-        return ResearchResponse.model_validate(db_research.__dict__)
-    
+    return ResearchResponse.model_validate(db_research.__dict__)
 
-@router.get("/{research_id}", response_model=ResearchResponse)
+
+@router.get("/{research_id}", status_code=status.HTTP_200_OK, response_model=ResearchResponse)
 def get_research(
-    research_id: int,
-    db: Session = Depends(get_db),
-    user: UserModel = Depends(only_authorized_user)
+    research_id: int, db: Session = Depends(get_db), user: UserModel = Depends(only_authorized_user)
 ):
     db_research = ResearchRepository.get_by_id(db, research_id)
     db_category_ids = CategoryRepository.get_by_research_id(db, research_id)
-    if not db_research:
-        raise HTTPException(status_code=404, detail="Research not found")
-    
+
     db_research.category_ids = db_category_ids
     return ResearchResponse.model_validate(db_research.__dict__)
 
@@ -73,25 +75,19 @@ def update_research(
     research_id: int,
     research: ResearchUpdateRequest,
     db: Session = Depends(get_db),
-    user: UserModel = Depends(access_only_user)
+    user: UserModel = Depends(access_only_user),
 ):
     db_research = ResearchRepository.get_by_id(db, research_id)
-    if not db_research:
-        raise HTTPException(status_code=404, detail="Research not found")
     new_research = ResearchRepository.update(db, db_research, research)
     if research.category_ids:
         new_research.category_ids = CategoryRepository.get_by_research_id(db, research_id)
     return ResearchResponse.model_validate(new_research.__dict__)
 
 
-@router.delete("/{research_id}")
+@router.delete("/{research_id}", response_model=ResearchResponse)
 def delete_research(
-    research_id: int,
-    db: Session = Depends(get_db),
-    user: UserModel = Depends(access_only_user)
+    research_id: int, db: Session = Depends(get_db), user: UserModel = Depends(access_only_user)
 ):
-    db_research = ResearchRepository.get_by_id(db, research_id)
-    if not db_research:
-        raise HTTPException(status_code=404, detail="Research not found")
-    ResearchRepository.delete(db, research_id)
-    return {"message": f"Research {research_id} deleted successfully"}
+    check_reserach_exists(db, research_id)
+    research = ResearchRepository.delete(db, research_id)
+    return ResearchResponse.model_validate(research.__dict__)
