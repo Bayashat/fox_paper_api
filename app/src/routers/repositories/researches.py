@@ -6,7 +6,7 @@ from app.src.models.research import Research, ResearchCategories
 from app.src.models.enums import Status
 from app.src.routers.repositories.categories import CategoryRepository
 from app.src.routers.schemas.researches import ResearchCreateRequest, ResearchUpdateRequest
-from app.src.routers.services.file import check_file_exists
+from app.src.routers.services.file import check_file_not_exists
 from app.src.routers.services.researches import check_reserach_exists
 from app.src.routers.services.db import add_commit_refresh, delete_commit
 
@@ -33,7 +33,7 @@ class ResearchRepository:
     
     @staticmethod
     def create_research(db: Session, research: ResearchCreateRequest, user_id: int):
-        check_file_exists(db, research.file_id)
+        check_file_not_exists(db, research.file_id)
         db_research = Research(
             title=research.title,
             description=research.description,
