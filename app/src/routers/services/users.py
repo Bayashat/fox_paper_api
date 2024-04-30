@@ -1,14 +1,25 @@
 from fastapi import HTTPException
+
 from sqlalchemy.orm import Session
+
 from passlib.context import CryptContext
 
-from ...models.user import User
-from ..schemas.users import UserModel, SignupSchema
+from app.src.models.user import User
+from app.src.routers.schemas.users import UserModel, SignupSchema
 from .db import add_commit_refresh
 
 
 # Encrypt password
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+
+
+def hash_and_save_user(db: Session, user: SignupSchema) -> User:
+    pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+    hashed_password = pwd_context.hash(user.password)
+    new_user = User(**user.model_dump(), role_id=1)
+    new_user.password = hashed_password
+    add_commit_refresh(db, new_user)
+    return new_user
 
 
 def check_user_not_exists(db: Session, user: SignupSchema):
@@ -21,17 +32,7 @@ def check_user_not_exists(db: Session, user: SignupSchema):
     if user_by_email or user_by_phone:
         raise HTTPException(status_code=400, detail="User already exists")
     
-
-
-def hash_and_save_user(db: Session, user: SignupSchema) -> User:
-    pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
-    hashed_password = pwd_context.hash(user.password)
-    new_user = User(**user.model_dump(), role_id=1)
-    new_user.password = hashed_password
-    add_commit_refresh(db, new_user)
-    return new_user
-
-
+    
 def user_login_validate( db: Session, user: UserModel):
     existing_user = db.query(User).filter(User.email == user.email).first()
     if not existing_user:
@@ -39,3 +40,8 @@ def user_login_validate( db: Session, user: UserModel):
         
     if not pwd_context.verify(user.password, existing_user.password):
         raise HTTPException(status_code=400, detail="Incorrect password")
+    
+def check_role_id(role_id: int):
+    if role_id and role_id not in [1, 2] or role_id == 0:
+        raise HTTPException(status_code=400, detail="Invalid role_id")
+    

@@ -1,16 +1,16 @@
 from pydantic import BaseModel, EmailStr
 from pydantic_extra_types.phone_numbers import PhoneNumber
-from datetime import datetime, date
-from typing import Optional
 
-from ...models.enums import Gender, UserRole
+from datetime import datetime, date
+
+from app.src.models.enums import Gender
 
 class UserModel(BaseModel):
     id: int
     first_name: str
     last_name: str
     email: EmailStr
-    gender: str 
+    gender: Gender
     phone_number: PhoneNumber | None
     date_of_birth: date | None
     biography: str | None
@@ -24,7 +24,7 @@ class SignupSchema(BaseModel):
     last_name: str
     email: EmailStr
     password: str
-    gender: Gender | None
+    gender: Gender
     phone_number: PhoneNumber | None = None
     date_of_birth: date | None = None
     

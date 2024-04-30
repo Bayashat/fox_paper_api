@@ -1,14 +1,15 @@
-from typing import Callable, List
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends
+
 from sqlalchemy.orm import Session
 
-from ...dependencies import get_db, access_only_user, only_authorized_user
-from ..repositories.users import UsersRepository
-from ..schemas.users import UserModel, UserUpdate
+from typing import Callable, List
+
+from app.src.dependencies import get_db, access_only_user, only_authorized_user
+from app.src.routers.repositories.users import UsersRepository
+from app.src.routers.schemas.users import UserModel, UserUpdate
 
 
-
-router = APIRouter()
+router = APIRouter(prefix="/users", tags=["users"])
 
 
 @router.get("/", response_model=List[UserModel])
@@ -23,10 +24,6 @@ def get_user(
     auth: Callable = Depends(access_only_user)
 ):
     user = UsersRepository.get_by_id(db, user_id)
-
-    if not user:
-        raise HTTPException(status_code=404, detail="User not found")
-
     return UserModel.model_validate(user.__dict__)
 
 
@@ -38,10 +35,6 @@ def update_user(
     auth: Callable = Depends(only_authorized_user)
 ):
     db_user = UsersRepository.get_by_id(db, user_id)
-
-    if not db_user:
-        raise HTTPException(status_code=404, detail="User not found")
-
     new_user = UsersRepository.update(db, db_user, user)
     return UserModel.model_validate(new_user.__dict__)
 
@@ -54,8 +47,5 @@ def delete_user(
 ):
     db_user = UsersRepository.get_by_id(db, user_id)
 
-    if not db_user:
-        raise HTTPException(status_code=404, detail="User not found")
-
     UsersRepository.delete(db, db_user)
-    return {"message": "User deleted"}
+    return UserModel.model_validate(db_user.__dict__)
