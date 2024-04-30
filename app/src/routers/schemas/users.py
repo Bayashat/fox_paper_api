@@ -10,7 +10,6 @@ class UserModel(BaseModel):
     first_name: str
     last_name: str
     email: EmailStr
-    password: str 
     gender: str 
     phone_number: PhoneNumber | None
     date_of_birth: date | None

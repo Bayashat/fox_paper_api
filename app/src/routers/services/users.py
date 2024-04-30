@@ -14,7 +14,10 @@ pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 def check_user_not_exists(db: Session, user: SignupSchema):
     # check by email and phone
     user_by_email = db.query(User).filter(User.email == user.email).first()
-    user_by_phone = db.query(User).filter(User.phone_number == user.phone_number).first()
+    if user.phone_number:
+        user_by_phone = db.query(User).filter(User.phone_number == user.phone_number).first()
+    else:
+        user_by_phone = None
     if user_by_email or user_by_phone:
         raise HTTPException(status_code=400, detail="User already exists")
     
