@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from app.src.routers.views import researches, users, auth, comments, moderators
+from app.src.routers.views import researches, users, auth, comments, moderators, favorites
 
 
 app = FastAPI()
@@ -19,4 +19,4 @@ app.include_router(users.router)
 app.include_router(researches.router)
 app.include_router(comments.router)
 app.include_router(moderators.router)
-
+app.include_router(favorites.router)

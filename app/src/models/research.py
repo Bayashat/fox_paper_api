@@ -26,6 +26,7 @@ class Research(Base, TimestampMixin):
     comments: Mapped[List["Comment"]] = relationship("Comment", back_populates="research")
     files: Mapped["File"] = relationship("File", back_populates="research")
     author: Mapped["User"] = relationship("User", back_populates="research")
+    favorites: Mapped[List["Favorite"]] = relationship("Favorite", back_populates="research")
 
 class ResearchCategories(Base):
     __tablename__ = 'research_categories'

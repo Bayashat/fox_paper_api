@@ -27,4 +27,4 @@ class User(Base, TimestampMixin):
     role: Mapped["Role"] = relationship("Role", back_populates="users")
     comments: Mapped[List["Comment"]] = relationship("Comment", back_populates="author")
     research: Mapped[List["Research"]] = relationship("Research", back_populates="author")
-    
+    favorites: Mapped[List["Favorite"]] = relationship("Favorite", back_populates="user")

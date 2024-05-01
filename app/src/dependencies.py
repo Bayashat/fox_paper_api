@@ -135,6 +135,5 @@ async def validate_file_size(file: UploadFile = File(...)):
     file_size = file.file.tell()  # get size of the file
     if file_size > max_size:
         raise HTTPException(status_code=413, detail="File too large")
-    file.file.seek(0) 
-    print('hii')
+    file.file.seek(0)
     return file
