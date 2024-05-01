@@ -21,8 +21,6 @@ Welcome to Fox Paper, a cutting-edge platform designed for the management and di
 
 * Commenting System: Engage with the community by adding comments to research papers.
 
-* Ratings and Reviews: Rate and review research papers to aid in quality assurance and community engagement.
-
 * Favorites: Bookmark research papers for easy access and reference.
 
 * Categorized Browsing: Navigate through research papers sorted into categories like Science, Technology, Medicine, and more.
