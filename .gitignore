@@ -165,6 +165,7 @@ cython_debug/
 # User Resources
 *.png
 *.jpg
+/**/uploads/
 
 # Database
 sql_app.db
