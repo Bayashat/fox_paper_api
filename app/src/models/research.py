@@ -9,6 +9,7 @@ from app.src.models.annotates import intpk, str_256
 from app.src.models.mixins import TimestampMixin
 from app.src.models.enums import Status
 from .file import File
+from .user import User
     
 class Research(Base, TimestampMixin):
     __tablename__ = "researches"
@@ -19,11 +20,12 @@ class Research(Base, TimestampMixin):
     status: Mapped[Status] = mapped_column(nullable=True, default=Status.SUBMITTED)
     published_at: Mapped[datetime] = mapped_column(nullable=True)
     file_id: Mapped[int] = mapped_column(ForeignKey("files.id", ondelete="CASCADE"), unique=True)
-    author_id: Mapped[str] 
+    author_id: Mapped[int] = mapped_column(ForeignKey("users.id", ondelete="SET NULL"))
     
     categories: Mapped[List["Category"]] = relationship(back_populates="researches", secondary="research_categories")
     comments: Mapped[List["Comment"]] = relationship("Comment", back_populates="research")
     files: Mapped["File"] = relationship("File", back_populates="research")
+    author: Mapped["User"] = relationship("User", back_populates="research")
 
 class ResearchCategories(Base):
     __tablename__ = 'research_categories'

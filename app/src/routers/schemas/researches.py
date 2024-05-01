@@ -13,7 +13,7 @@ class ResearchResponse(BaseModel):
     created_at: datetime
     updated_at: datetime
     published_at: datetime | None = None
-    author_id: str
+    author_id: int
     category_ids: list[dict] | None = None
     
 
