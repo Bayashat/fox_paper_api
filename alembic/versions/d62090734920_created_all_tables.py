@@ -1,8 +1,8 @@
 """created all tables
 
-Revision ID: d920fbbbaf6f
+Revision ID: d62090734920
 Revises: 
-Create Date: 2024-05-01 17:39:32.380973
+Create Date: 2024-05-01 18:01:03.262877
 
 """
 from typing import Sequence, Union
@@ -12,7 +12,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision: str = 'd920fbbbaf6f'
+revision: str = 'd62090734920'
 down_revision: Union[str, None] = None
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
@@ -51,7 +51,7 @@ def upgrade() -> None:
     sa.Column('role_id', sa.Integer(), nullable=False),
     sa.Column('created_at', sa.DateTime(), server_default=sa.text("TIMEZONE('utc', now())"), nullable=False),
     sa.Column('updated_at', sa.DateTime(), server_default=sa.text("TIMEZONE('utc', now())"), nullable=False),
-    sa.ForeignKeyConstraint(['role_id'], ['roles.id'], ondelete='SET NULL'),
+    sa.ForeignKeyConstraint(['role_id'], ['roles.id'], ondelete='CASCADE'),
     sa.PrimaryKeyConstraint('id')
     )
     op.create_index(op.f('ix_users_email'), 'users', ['email'], unique=True)
@@ -66,7 +66,7 @@ def upgrade() -> None:
     sa.Column('author_id', sa.Integer(), nullable=False),
     sa.Column('created_at', sa.DateTime(), server_default=sa.text("TIMEZONE('utc', now())"), nullable=False),
     sa.Column('updated_at', sa.DateTime(), server_default=sa.text("TIMEZONE('utc', now())"), nullable=False),
-    sa.ForeignKeyConstraint(['author_id'], ['users.id'], ondelete='SET NULL'),
+    sa.ForeignKeyConstraint(['author_id'], ['users.id'], ondelete='CASCADE'),
     sa.ForeignKeyConstraint(['file_id'], ['files.id'], ondelete='CASCADE'),
     sa.PrimaryKeyConstraint('id'),
     sa.UniqueConstraint('file_id')
@@ -85,11 +85,11 @@ def upgrade() -> None:
     op.create_table('research_categories',
     sa.Column('research_id', sa.Integer(), nullable=False),
     sa.Column('category_id', sa.Integer(), nullable=False),
-    sa.ForeignKeyConstraint(['category_id'], ['categories.id'], ondelete='SET NULL'),
-    sa.ForeignKeyConstraint(['research_id'], ['researches.id'], ondelete='SET NULL'),
+    sa.ForeignKeyConstraint(['category_id'], ['categories.id'], ondelete='CASCADE'),
+    sa.ForeignKeyConstraint(['research_id'], ['researches.id'], ondelete='CASCADE'),
     sa.PrimaryKeyConstraint('research_id', 'category_id')
     )
-    
+        
     # Insert pre-defined values
     op.execute("INSERT INTO roles (name) VALUES ('USER'), ('MODERATOR')")
     op.execute(

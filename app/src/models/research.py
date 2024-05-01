@@ -20,7 +20,7 @@ class Research(Base, TimestampMixin):
     status: Mapped[Status] = mapped_column(nullable=True, default=Status.SUBMITTED)
     published_at: Mapped[datetime] = mapped_column(nullable=True)
     file_id: Mapped[int] = mapped_column(ForeignKey("files.id", ondelete="CASCADE"), unique=True)
-    author_id: Mapped[int] = mapped_column(ForeignKey("users.id", ondelete="SET NULL"))
+    author_id: Mapped[int] = mapped_column(ForeignKey("users.id", ondelete="CASCADE"))
     
     categories: Mapped[List["Category"]] = relationship(back_populates="researches", secondary="research_categories")
     comments: Mapped[List["Comment"]] = relationship("Comment", back_populates="research")
@@ -30,5 +30,5 @@ class Research(Base, TimestampMixin):
 class ResearchCategories(Base):
     __tablename__ = 'research_categories'
     
-    research_id: Mapped[int] = mapped_column(ForeignKey("researches.id", ondelete="SET NULL"), primary_key=True)
-    category_id: Mapped[int] = mapped_column(ForeignKey("categories.id", ondelete="SET NULL"), primary_key=True)
+    research_id: Mapped[int] = mapped_column(ForeignKey("researches.id", ondelete="CASCADE"), primary_key=True)
+    category_id: Mapped[int] = mapped_column(ForeignKey("categories.id", ondelete="CASCADE"), primary_key=True)

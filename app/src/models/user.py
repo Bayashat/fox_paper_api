@@ -22,7 +22,7 @@ class User(Base, TimestampMixin):
     phone_number: Mapped[str] = mapped_column(String(50), index=True, unique=True, nullable=True)
     date_of_birth: Mapped[date] = mapped_column(nullable=True)
     biography: Mapped[str] = mapped_column(Text, nullable=True)
-    role_id: Mapped[int] = mapped_column(ForeignKey("roles.id", ondelete="SET NULL"))
+    role_id: Mapped[int] = mapped_column(ForeignKey("roles.id", ondelete="CASCADE"))
     
     role: Mapped["Role"] = relationship("Role", back_populates="users")
     comments: Mapped[List["Comment"]] = relationship("Comment", back_populates="author")
