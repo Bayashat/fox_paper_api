@@ -2,34 +2,35 @@
 
 
 ## Project Overview
-Welcome to the Fox Paper! This portal is designed to serve as a platform for managing and accessing research papers, articles, and related resources. Whether you are a researcher, student, or enthusiast, this portal aims to provide a centralized and user-friendly interface for discovering and organizing research materials.
+Welcome to Fox Paper, a cutting-edge platform designed for the management and discovery of research papers, articles, and academic resources. Tailored for researchers, students, educators, and enthusiasts, Fox Paper offers a centralized, user-friendly interface for accessing a wide range of scholarly materials.
 
-## Features
-1. User Registration: Users can register on the platform by providing essential details like email, phone number, password, name.
+## Key Features
+* User Registration:  Sign up with essential information such as email, phone number, and password.
 
-2. User Authentication: Utilizing JWT (JSON Web Tokens), the project ensures secure and seamless authentication for registered users.
+* Secure User Authentication: Utilizes JWT (JSON Web Tokens) to ensure secure access.
 
-3. User Profile Management: Authenticated users can update their personal information, including phone number, name, and city.
+* User Role Management: Supports predefined roles including 'User' and 'Moderator', allowing for differentiated access and functionalities.
 
-4. Research Paper Management: Users can create, update, and delete research papers, including details like title, author, publication date, and category.
+* Profile Management: Users can update personal information such as phone number, name, and city.
 
-5. Research Paper Search: Users can search for research papers based on title, author, publication date, and category.
+* Research Management: Create, update, view, and delete research entries, enhancing academic collaboration and resource sharing.
 
-6. Research Paper Comments: Users can add comments to research papers, providing feedback, insights, and additional information.
+* File Upload: Allows for independent file uploads with the ability to link these files to research entries post-upload.
 
-7. Research Paper Ratings: Users can rate research papers based on their quality, relevance, and significance.
+* Advanced Search: Filter and search for research papers by title, author, publication date, or category.
 
-8. Research Paper Favorites: Users can add research papers to their favorites list for easy access and reference.
+* Commenting System: Engage with the community by adding comments to research papers.
 
-9. Research Paper Categories: Users can browse research papers based on categories like Computer Science, Mathematics, Physics, and more.
+* Ratings and Reviews: Rate and review research papers to aid in quality assurance and community engagement.
 
-10. Moderator Role: Moderators can review, approve, reject, and flag research papers based on quality, relevance, and compliance.
+* Favorites: Bookmark research papers for easy access and reference.
 
-11. Moderator Dashboard: Moderators have access to a dedicated dashboard for managing research papers, comments, ratings, and user activity.
+* Categorized Browsing: Navigate through research papers sorted into categories like Science, Technology, Medicine, and more.
 
+* Moderator Dashboard: Specialized dashboard for moderators to approve, reject, and manage submissions ensuring content quality and relevance.
 
 ## Technology Stack
-* FastAPI: A modern, fast web framework for building APIs with Python 3.7+ based on standard Python type hints.
+* FastAPI: Utilizes this modern, fast web framework for building APIs with Python 3.11, emphasizing on speed and the use of standard Python type hints.
 
 * SQLAlchemy: A powerful and flexible SQL toolkit and Object-Relational Mapping (ORM) library for Python.
 
@@ -46,11 +47,13 @@ Welcome to the Fox Paper! This portal is designed to serve as a platform for man
 ├── alembic
 │   ├── README
 │   ├── env.py
+│   ├── script.py.mako
+│   └── versions
+│       ├── 4b8c0642a303_created_all_tables.py
 ├── alembic.ini
 ├── app
 │   ├── __init__.py
 │   ├── main.py
-│   ├── requirements.txt
 │   ├── src
 │   │   ├── __init__.py
 │   │   ├── config.py
@@ -58,30 +61,36 @@ Welcome to the Fox Paper! This portal is designed to serve as a platform for man
 │   │   ├── dependencies.py
 │   │   ├── models
 │   │   │   ├── __init__.py
+│   │   │   ├── annotates.py
 │   │   │   ├── category.py
 │   │   │   ├── comment.py
+│   │   │   ├── enums.py
 │   │   │   ├── file.py
-│   │   │   ├── id_abc.py
+│   │   │   ├── mixins.py
 │   │   │   ├── research.py
 │   │   │   ├── role.py
 │   │   │   └── user.py
 │   │   ├── routers
 │   │   │   ├── __init__.py
-│   │   │   ├── api.py
 │   │   │   ├── repositories
 │   │   │   │   ├── __init__.py
 │   │   │   │   ├── categories.py
 │   │   │   │   ├── comments.py
+│   │   │   │   ├── file.py
 │   │   │   │   ├── researches.py
 │   │   │   │   └── users.py
 │   │   │   ├── schemas
 │   │   │   │   ├── __init__.py
+│   │   │   │   ├── auth.py
 │   │   │   │   ├── comments.py
 │   │   │   │   ├── researches.py
 │   │   │   │   └── users.py
 │   │   │   ├── services
 │   │   │   │   ├── __init__.py
-│   │   │   │   ├── moderators.py
+│   │   │   │   ├── category.py
+│   │   │   │   ├── comment.py
+│   │   │   │   ├── db.py
+│   │   │   │   ├── file.py
 │   │   │   │   ├── researches.py
 │   │   │   │   └── users.py
 │   │   │   └── views
@@ -91,49 +100,71 @@ Welcome to the Fox Paper! This portal is designed to serve as a platform for man
 │   │   │       ├── moderators.py
 │   │   │       ├── researches.py
 │   │   │       └── users.py
-│   │   └── utils.py
+│   │   └── uploads
+│   └── test
+│       ├── __init__.py
+│       ├── config
+│       │   ├── __init__.py
+│       │   └── database_test_config.py
+│       ├── templates
+│       │   └── __init__.py
+│       ├── test_api
+│       │   └── __init__.py
+│       └── test_jwt.py
 ├── docker-compose.yml
 ├── requirements.txt
 └── scripts
-    └── launch.sh
+    ├── entrypoint.sh
+    └── wait-for-it.sh
 ```
 
+## Environment Setup
+Before running the application, you need to set up the environment variables which are crucial for connecting to the database and securing the application. Create a .env file in the root directory of the project and populate it with the following keys:
 
-## Installation
-
-Clone the repository and navigate to the project directory:
-
-```bash
-git clone https://github.com/Bayashat/fox_paper_api
-cd fox_paper_api
+```plaintext
+DB_HOST=localhost
+DB_PORT=5432
+DB_USER=your_username
+DB_PASS=your_password
+DB_NAME=fox_paper
+SECRET_KEY=your_secret_key
+ALGORITHM=HS256
 ```
+* Important:
+    - `DB_HOST`: The hostname where your database is running.
+    - `DB_PORT`: The port on which your database server is listening.
+    - `DB_USER`: The username used to access the database.
+    - `DB_PASS`: The password for the database user.
+    - `SECRET_KEY`: A secret key used for securely signing the JWTs.
+    - `ALGORITHM`: The algorithm used for encoding the JWTs.
 
-Create a virtual environment (optional but recommended):
+## Installation Instructions
 
-```bash
-python3 -m venv .venv
-```
+* Clone the repository and navigate to the project directory:
+    ```bash
+    git clone https://github.com/Bayashat/fox_paper_api
+    cd fox_paper_api
+    ```
 
-Activate the virtual environment:
+* Set up a virtual environment (recommended):
+    - windows
+        ```bash
+        python -m venv .venv
+        .venv\Scripts\activate
+        ```
+    - macOS/Linux
+        ```bash
+        python3 -m venv .venv
+        source .venv/bin/activate
+        ```
 
-* Windows:
-```bash
-.venv\Scripts\activate
-```
-
-* macOS/Linux:
-```bash
-source .venv/bin/activate
-```
-
-Install the project dependencies:
-```bash
-pip install -r requirements.txt
-```
+* Install dependencies:
+    ```bash
+    pip install -r requirements.txt
+    ```
 
 ## Database Setup
-
-Migrate the database using Alembic:
+Apply migrations with Alembic:
 
 ```bash
 alembic upgrade head
@@ -141,51 +172,21 @@ alembic upgrade head
 
 ## Running the API
 
-Run the FastAPI application:
+Start the FastAPI server:
 
 ```bash
 uvicorn app.main:app --reload
 ```
-The API will be available at http://127.0.0.1:8000.
+Access the API at: http://127.0.0.1:8000.
 
-## API Endpoints
+## Docker Usage
 
-### User Authentication
-* `POST /auth/signup`: Register a new user.
-* `POST /auth/login`: Authenticate a user and generate a JWT token.
+Build and run using Docker Compose:
 
-### User Management
-* `GET /users/`: Get list of users
-* `GET /users/{id}`: Retrieve details of a user.
-* `PUT /users/{id}`: Modify details of a user.
-* `DELETE /users/{id}`: Delete a user.
-
-### Research Paper Management
-* `GET /researches/`: Get list of research papers.
-* `POST /researches/`: Create a new research paper.
-* `GET /researches/{id}`: Retrieve details of a research paper.
-* `PUT /researches/{id}`: Modify details of a research paper.
-* `DELETE /researches/{id}`: Delete a research paper.
-
-### Research Paper Comments
-* `GET /researches/{id}/comments/`: Get list of comments for a research paper.
-* `POST /researches/{id}/comments/`: Add a new comment to a research paper.
-* `GET /researches/{id}/comments/{comment_id}`: Retrieve details of a comment.  
-* `DELETE /researches/{id}/comments/{comment_id}`: Delete a comment.
-
-### Moderator Actions
-* `GET /moderators/researches/pending`: Get list of pending research papers.
-* `PUT /moderators/researches/{id}/review`: Review a research paper.
-* `PUT /moderators/researches/{id}/publish`: Publish a research paper.
-* `PUT /moderators/researches/{id}/reject`: Reject a research paper.
-* `GET /moderators/researches/published`: Get list of published research papers.
-
-## Docker
-Build and run the docker image:
 ```bash
 docker compose up -d --build
 ```
-The API will be available at [http://0.0.0.0:8080.](http://127.0.0.1:8000/docs)
+The API will be available at [http://0.0.0.0:8080.](http://127.0.0.1:8000/docs) (Auto-generated Swagger documentation)
 
-## Backend Author
-Tokmukamet Bayashat
+## Author
+[Tokmukamet Bayashat](https://t.me/bayashat)
