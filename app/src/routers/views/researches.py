@@ -1,10 +1,10 @@
-from fastapi import APIRouter, Depends, status
+from fastapi import APIRouter, Depends, status, File, UploadFile, HTTPException
 
 from sqlalchemy.orm import Session
 
 from typing import List
 
-from app.src.dependencies import get_db, access_only_user, only_authorized_user
+from app.src.dependencies import get_db, access_only_user, only_authorized_user, validate_file_size
 from app.src.models.enums import Status
 from app.src.routers.repositories.researches import ResearchRepository
 from app.src.routers.repositories.categories import CategoryRepository
@@ -17,6 +17,7 @@ from app.src.routers.schemas.researches import (
 from app.src.routers.services.researches import research_create_validate
 from app.src.routers.services.researches import check_reserach_exists
 from app.src.routers.services.users import check_user_validate_by_researchID
+from app.src.routers.services.file import save_uploaded_file
 
 
 router = APIRouter(prefix="/researches", tags=["researches"])
@@ -45,19 +46,27 @@ def research_list(
 
     return [ResearchResponse.model_validate(research.__dict__) for research in researches]
 
-
+@router.post("/upload-file", status_code=status.HTTP_201_CREATED)  
+async def upload_file(
+    file: UploadFile = Depends(validate_file_size),
+    db: Session = Depends(get_db),
+):
+    result = await save_uploaded_file(db, file)
+    return result
+    
 @router.post("/", status_code=status.HTTP_201_CREATED, response_model=ResearchResponse)
 def create_research(
-    research: ResearchCreateRequest,
+    research_data: ResearchCreateRequest,
     db: Session = Depends(get_db),
     user: UserModel = Depends(access_only_user),
 ):
-    research_create_validate(db, research)
-    db_research = ResearchRepository.create_research(db, research, user.id)
+    research_create_validate(db, research_data)
+    db_research = ResearchRepository.create_research(db, research_data, user.id)
     db_category_ids = CategoryRepository.get_by_research_id(db, db_research.id)
     db_research.category_ids = db_category_ids
 
     return ResearchResponse.model_validate(db_research.__dict__)
+
 
 
 @router.get("/{research_id}", status_code=status.HTTP_200_OK, response_model=ResearchResponse)

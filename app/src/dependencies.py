@@ -1,9 +1,10 @@
-from jose import jwt
-from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
-from app.src.database import SessionLocal
-from fastapi import Depends, Request, HTTPException, status
+from fastapi.security import  HTTPBearer
+from fastapi import Depends, Request, HTTPException, status, UploadFile, File
 
-from app.src.models.user import User
+from jose import jwt
+import os
+
+from app.src.database import SessionLocal
 from .routers.repositories.users import UsersRepository
 from .routers.schemas.users import UserModel
 from .config import settings
@@ -127,3 +128,13 @@ def only_authorized_user(
             detail="User not authorized",
         )
     return UserModel.model_validate(existing_user.__dict__)
+
+async def validate_file_size(file: UploadFile = File(...)):  
+    max_size = 10 * 1024 * 1024  # 10 MB limit
+    file.file.seek(0, os.SEEK_END)  # move the cursor to the end of the file
+    file_size = file.file.tell()  # get size of the file
+    if file_size > max_size:
+        raise HTTPException(status_code=413, detail="File too large")
+    file.file.seek(0) 
+    print('hii')
+    return file

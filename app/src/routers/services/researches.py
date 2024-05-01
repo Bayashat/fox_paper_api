@@ -4,11 +4,11 @@ from sqlalchemy.orm import Session
 from app.src.models.research import Research
 from app.src.models.enums import Status
 from app.src.routers.schemas.researches import ResearchCreateRequest
-from app.src.routers.services.file import check_file_not_exists
+from app.src.routers.services.file import check_file_exists
 from app.src.routers.services.category import check_category_ids_valid
 
 def research_create_validate(db: Session, research: ResearchCreateRequest):
-    check_file_not_exists(db, research.file_id)
+    check_file_exists(db, research.file_id)
     check_category_ids_valid(db, research.category_ids)
 
 def check_reserach_exists(db: Session, research_id: int):
