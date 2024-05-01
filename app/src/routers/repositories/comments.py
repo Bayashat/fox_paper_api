@@ -24,3 +24,7 @@ class CommentsRepository:
         db_comment = db.query(Comment).filter(Comment.research_id == research_id, Comment.id == comment_id).first()
         delete_commit(db, db_comment)
         return db_comment
+    
+    @staticmethod
+    def get_user_id_by_comment_id(db: Session, comment_id: int):
+        return db.query(Comment).filter(Comment.id == comment_id).first().user_id

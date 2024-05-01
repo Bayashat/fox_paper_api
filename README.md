@@ -11,7 +11,7 @@ Welcome to Fox Paper, a cutting-edge platform designed for the management and di
 
 * User Role Management: Supports predefined roles including 'User' and 'Moderator', allowing for differentiated access and functionalities.
 
-* Profile Management: Users can update personal information such as phone number, name, and city.
+* Profile Management: Users can update personal information such as phone number, name, date of birth.
 
 * Research Management: Create, update, view, and delete research entries, enhancing academic collaboration and resource sharing.
 

@@ -9,6 +9,7 @@ from app.src.routers.repositories.comments import CommentsRepository
 from app.src.routers.schemas.comments import CommentResponse, CommentCreateRequest
 from app.src.routers.schemas.users import UserModel
 from app.src.routers.services.researches import check_reserach_exists
+from app.src.routers.services.users import check_user_validate_by_userID
 from app.src.routers.services.comment import check_comment_exists
 
 router = APIRouter(prefix="/researches", tags=["comments"])
@@ -47,6 +48,8 @@ def delete_comment(
 ):
     check_reserach_exists(db, research_id)
     check_comment_exists(db, research_id, comment_id)
+    comment_author_id = CommentsRepository.get_user_id_by_comment_id(db, comment_id)
+    check_user_validate_by_userID(db, comment_author_id, user)
     comment = CommentsRepository.delete_comment(db, research_id, comment_id)
     
     return CommentResponse.model_validate(comment.__dict__)

@@ -73,6 +73,7 @@ def create_research(
 def get_research(
     research_id: int, db: Session = Depends(get_db), user: UserModel = Depends(only_authorized_user)
 ):
+    check_reserach_exists(db, research_id)
     db_research = ResearchRepository.get_by_id(db, research_id)
     db_category_ids = CategoryRepository.get_by_research_id(db, research_id)
 
@@ -88,7 +89,7 @@ def update_research(
     user: UserModel = Depends(access_only_user),
 ):
     check_reserach_exists(db, research_id)
-    check_user_validate_by_researchID(db, user, research_id)
+    check_user_validate_by_researchID(db, research_id, user)
     db_research = ResearchRepository.get_by_id(db, research_id)
     new_research = ResearchRepository.update(db, db_research, research)
     if research.category_ids:
@@ -102,6 +103,6 @@ def delete_research(
     user: UserModel = Depends(only_authorized_user)
 ):
     check_reserach_exists(db, research_id)
-    check_user_validate_by_researchID(db, user, research_id)
+    check_user_validate_by_researchID(db, research_id, user)
     research = ResearchRepository.delete(db, research_id)
     return ResearchResponse.model_validate(research.__dict__)
