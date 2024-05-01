@@ -42,11 +42,13 @@ class UsersRepository:
         
         check_role_id(user.role_id)
         
+        update_data = user.model_dump(exclude_unset=True, exclude={"password"})
+            
+        for key, value in update_data.items():
+            setattr(db_user, key, value)
+        
         if user.password:
             db_user.password = pwd_context.hash(user.password)
-            
-        for key, value in user.model_dump(exclude_unset=True).items():
-            setattr(db_user, key, value)
             
         db.commit()
         db.refresh(db_user)

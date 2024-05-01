@@ -29,17 +29,18 @@ def research_list(
     skip: int = 0,
     limit: int = 20,
     search_text: str | None = None,
+    author: str | None = None,
     category_ids: str | None = None,
     status: Status | None = None,
     user: UserModel = Depends(only_authorized_user),
 ):
     if user.role_id == 2:
         researches = ResearchRepository.get_researches(
-            db, limit, skip, search_text, category_ids, status
+            db, limit, skip, search_text, author, category_ids, status
         )
     else:
         researches = ResearchRepository.get_researches(
-            db, limit, skip, search_text, category_ids, Status.PUBLISHED
+            db, limit, skip, search_text, author, category_ids, Status.PUBLISHED
         )
     for research in researches:
         research.category_ids = CategoryRepository.get_by_research_id(db, research.id)
