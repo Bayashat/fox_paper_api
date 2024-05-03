@@ -2,10 +2,10 @@ from datetime import datetime
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 
-from ...dependencies import get_db, access_only_moderator
-from ..services.researches import get_pending_research_by_id, get_under_review_research_by_id
-from ...models.enums import ResearchAction
-from ..schemas.researches import ResearchResponse, ResearchActionRequest
+from app.src.dependencies import get_db, access_only_moderator
+from app.src.models.enums import ResearchAction
+from app.src.routers.services.researches import get_pending_research_by_id, get_under_review_research_by_id
+from app.src.routers.schemas.researches import ResearchResponse, ResearchActionRequest
 
 router = APIRouter(prefix="/moderators", tags=["moderators"])
 

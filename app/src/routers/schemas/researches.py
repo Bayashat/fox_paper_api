@@ -1,8 +1,7 @@
 from pydantic import BaseModel
 from datetime import datetime
 
-from ...models.enums import Status
-from ...models.enums import ResearchAction
+from app.src.models.enums import Status, ResearchAction
 
 class ResearchResponse(BaseModel):
     id: int
