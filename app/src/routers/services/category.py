@@ -3,7 +3,6 @@ from fastapi import HTTPException
 from sqlalchemy.orm import Session
 
 from app.src.models.category import Category
-from app.src.models.research import ResearchCategories
 
 def check_category_ids_valid(db: Session, category_ids: str) -> None:
     category_id_list = [id for id in category_ids.split(",")]

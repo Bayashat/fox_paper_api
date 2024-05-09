@@ -1,5 +1,5 @@
 from app.src.models.category import Category
-from app.src.models.category import ResearchCategories
+from app.src.models.research import ResearchCategories
 
 from sqlalchemy.orm import Session
 
